@@ -1,16 +1,20 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import SearchItem from "./SearchItem";
+import SearchItem from "./common/SearchItem";
 import VerticalDivider from "../shared/VerticalDivider";
 import LocationSearch from "./LocationSearch/index";
+import BookingDates from "./BookingDates";
 import { useOutsideAlerter } from "../../hooks/outsideAlerter";
+import { ComponentId } from "./enums";
 
 const SearchContainer = styled.div`
+  position: relative;
   background-color: ${(p) => p.theme.colors.primaryBackground};
   margin: 16px auto;
   border: 1px solid #dddddd;
   border-radius: 32px;
-  width: 50%;
+  width: 100%;
+  max-width: 850px; //temp
   height: 66px;
   display: flex;
   justify-content: center;
@@ -27,7 +31,7 @@ const SearchBar: React.FC = () => {
     number | null
   >(null);
 
-  const getSelectedStatus = (id: number) => {
+  const getSelectedStatus = (id: ComponentId) => {
     if (selectedSearchOption === null) return selectedSearchOption;
     return selectedSearchOption === id;
   };
@@ -43,33 +47,33 @@ const SearchBar: React.FC = () => {
       selected={selectedSearchOption !== null}
     >
       <LocationSearch
-        onClick={() => setSelectedSearchOption(1)}
-        selected={getSelectedStatus(1)}
+        onClick={() => setSelectedSearchOption(ComponentId.LocationSearch)}
+        selected={getSelectedStatus(ComponentId.LocationSearch)}
       />
       <VerticalDivider
-        transparent={!!(getSelectedStatus(1) || getSelectedStatus(2))}
+        transparent={
+          !!(
+            getSelectedStatus(ComponentId.LocationSearch) ||
+            getSelectedStatus(ComponentId.CheckInDate)
+          )
+        }
       />
-      <SearchItem
-        onClick={() => setSelectedSearchOption(2)}
-        selected={getSelectedStatus(2)}
-      >
-        <div>Check In</div>
-      </SearchItem>
+      <BookingDates
+        getSelectedStatus={getSelectedStatus}
+        setSelectedId={(id: ComponentId) => setSelectedSearchOption(id)}
+        selectedId={selectedSearchOption}
+      />
       <VerticalDivider
-        transparent={!!(getSelectedStatus(2) || getSelectedStatus(3))}
+        transparent={
+          !!(
+            getSelectedStatus(ComponentId.CheckOutDate) ||
+            getSelectedStatus(ComponentId.Guests)
+          )
+        }
       />
       <SearchItem
-        onClick={() => setSelectedSearchOption(3)}
-        selected={getSelectedStatus(3)}
-      >
-        <div>Check Out</div>
-      </SearchItem>
-      <VerticalDivider
-        transparent={!!(getSelectedStatus(3) || getSelectedStatus(4))}
-      />
-      <SearchItem
-        onClick={() => setSelectedSearchOption(4)}
-        selected={getSelectedStatus(4)}
+        onClick={() => setSelectedSearchOption(ComponentId.Guests)}
+        selected={getSelectedStatus(ComponentId.Guests)}
       >
         <div>Guests</div>
       </SearchItem>

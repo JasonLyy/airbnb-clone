@@ -17,15 +17,19 @@ declare module "styled-components" {
 }
 
 interface FontWeights {
-  light: number;
-  normal: number;
-  bold: number;
+  fontWeights: {
+    light: number;
+    normal: number;
+    bold: number;
+  };
 }
 
 const fontWeights = {
-  light: 200,
-  normal: 400,
-  bold: 800,
+  fontWeights: {
+    light: 200,
+    normal: 400,
+    bold: 800,
+  },
 };
 
 export const mainTheme: DefaultTheme = {
@@ -40,5 +44,6 @@ export const mainTheme: DefaultTheme = {
     alternativePrimary: "##008489",
     alternativeSecondary: "#FC642D",
   },
+
   ...fontWeights,
 };

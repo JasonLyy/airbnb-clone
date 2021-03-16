@@ -41,7 +41,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   inputText,
   isVisible,
 }) => {
-  console.log("Used later: ", inputText);
+  // console.log("Used later: ", inputText);
   return (
     <>
       {isVisible && (

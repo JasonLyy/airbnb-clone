@@ -1,0 +1,34 @@
+.DayPicker__horizontal {
+  margin: auto;
+  font-family: "Airbnb Cereal App Light";
+  border: 0px;
+}
+
+.CalendarDay__default:hover {
+  border-radius: 64px;
+  border: 1px solid rgb(34, 34, 34);
+  background-color: transparent;
+}
+
+.CalendarDay__selected {
+  border-radius: 64px;
+  background: #222222;
+  color: white;
+}
+
+.CalendarDay__selected_span {
+  background: #f7f7f7;
+  color: rgb(34, 34, 34);
+}
+
+.CalendarMonth_table {
+  border-collapse: separate;
+}
+
+.CalendarDay__default {
+  border: 0px;
+}
+
+.CalendarDay__hovered_span {
+  background: #f7f7f7;
+}

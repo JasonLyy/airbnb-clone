@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import LocationInput from "./LocationInput";
+import SearchInput from "../common/SearchInput";
+import SearchItem from "../common/SearchItem";
 import LocationSearchResult from "./LocationSearchResult";
-import { SearchInput } from "../types";
-import SearchItem from "../SearchItem";
 
 const LocationSearchContainer = styled.div`
   flex: 1;
@@ -18,21 +17,18 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   onClick,
   selected,
 }) => {
-  const [inputText, setInputText] = useState<SearchInput>();
-  const [locationInputFocused, setLocationInputFocused] = useState(false);
+  const [inputText, setInputText] = useState<string | undefined>();
 
   return (
     <LocationSearchContainer onClick={onClick}>
       <SearchItem selected={selected}>
-        <LocationInput
-          onFocus={(focused: boolean) => setLocationInputFocused(focused)}
+        <SearchInput
           onTextChange={(text: string) => setInputText(text)}
+          title="Location"
+          placeholder="Where are you going?"
         />
       </SearchItem>
-      <LocationSearchResult
-        inputText={inputText}
-        isVisible={locationInputFocused}
-      />
+      <LocationSearchResult inputText={inputText} isVisible={!!selected} />
     </LocationSearchContainer>
   );
 };

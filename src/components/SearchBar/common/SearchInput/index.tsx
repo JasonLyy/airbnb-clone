@@ -15,14 +15,22 @@ const Input = styled.input`
   background-color: transparent;
 `;
 
-interface LocationInputProps {
+interface SearchInputProps {
+  title: string;
+  placeholder: string;
   onFocus?: (hovered: boolean) => void;
-  onTextChange: (text: string) => void;
+  onTextChange?: (text: string) => void;
+  text?: string;
+  disabled?: boolean;
 }
 
-const LocationInput: React.FC<LocationInputProps> = ({
+const SearchInput: React.FC<SearchInputProps> = ({
+  title,
+  placeholder,
   onFocus,
   onTextChange,
+  text,
+  disabled = false,
 }) => {
   const [inputFocused, setInputFocused] = useState(false);
 
@@ -33,16 +41,18 @@ const LocationInput: React.FC<LocationInputProps> = ({
 
   return (
     <Container onClick={() => setInputFocused(true)}>
-      <InputHeading>Location</InputHeading>
+      <InputHeading>{title}</InputHeading>
       <Input
-        placeholder="Where are you going?"
+        placeholder={placeholder}
         ref={(input) => inputFocused && input?.focus()}
         onBlur={() => onInputFocusChanged(false)}
         onFocus={() => onInputFocusChanged(true)}
-        onChange={(input) => onTextChange(input.target.value)}
+        onChange={(input) => onTextChange && onTextChange(input.target.value)}
+        disabled={disabled}
+        value={text}
       />
     </Container>
   );
 };
 
-export default LocationInput;
+export default SearchInput;
