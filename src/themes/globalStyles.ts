@@ -9,13 +9,11 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
   }
 
-
-  /* ${(p) => p.theme.colors.primaryBackground}; */
   body {
     margin: 0;
     background: grey;
     font-size: 14px;
-    color: ${(p) => p.theme.colors.primaryText};
+    color: ${(p) => p.theme.colors.primaryComponent};
     font-family: "Airbnb Cereal App Light", Roboto, "Helvetica Neue", sans-serif, Arial;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

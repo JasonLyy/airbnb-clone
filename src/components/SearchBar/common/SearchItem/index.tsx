@@ -3,7 +3,8 @@ import styled, { css } from "styled-components";
 
 const Item = styled.div`
   border-radius: 32px;
-  flex: 1;
+  flex: 1 1;
+  overflow: hidden;
 
   ${(p: Partial<SearchItemProps>) => {
     if (p.selected === null) {

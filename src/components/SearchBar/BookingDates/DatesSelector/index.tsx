@@ -4,7 +4,6 @@ import styled from "styled-components";
 import type { Moment } from "moment";
 import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
-// import "./styles.css";
 
 const DatesSelectorContainer = styled.div`
   .DayPicker__horizontal {
@@ -15,19 +14,19 @@ const DatesSelectorContainer = styled.div`
 
   .CalendarDay__default:hover {
     border-radius: 64px;
-    border: 1px solid ${(p) => p.theme.colors.primaryText};
+    border: 1px solid ${(p) => p.theme.colors.primaryComponent};
     background-color: transparent;
   }
 
   .CalendarDay__selected {
     border-radius: 64px;
-    background: ${(p) => p.theme.colors.primaryText};
+    background: ${(p) => p.theme.colors.primaryComponent};
     color: white;
   }
 
   .CalendarDay__selected_span {
     background: ${(p) => p.theme.colors.lighterPrimaryBackground};
-    color: ${(p) => p.theme.colors.primaryText};
+    color: ${(p) => p.theme.colors.primaryComponent};
   }
 
   .CalendarMonth_table {

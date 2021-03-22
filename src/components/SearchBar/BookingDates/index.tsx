@@ -117,7 +117,7 @@ const BookingDates: React.FC<DatesSelectorProps> = ({
           disabled
         />
       </SearchItem>
-      $
+
       {(getSelectedStatus(ComponentId.CheckInDate) ||
         getSelectedStatus(ComponentId.CheckOutDate)) && (
         <DateSelectorContainer>

@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-const Divider = styled.div`
+const Divider = styled.div<VerticalDividerProps>`
   height: 32px;
-  border-right: 1px solid
-    ${(p: VerticalDividerProps) => (p.transparent ? "transparent" : "#dddddd")};
+  border-right: 1px solid ${(p) => (p.transparent ? "transparent" : "#dddddd")};
   flex: 0 0 0px;
   align-self: center;
 `;

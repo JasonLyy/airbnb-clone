@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import SearchItem from "./common/SearchItem";
 import VerticalDivider from "../shared/VerticalDivider";
 import LocationSearch from "./LocationSearch/index";
 import BookingDates from "./BookingDates";
 import { useOutsideAlerter } from "../../hooks/outsideAlerter";
 import { ComponentId } from "./enums";
+import GuestsSelector from "./GuestsSelector";
 
-const SearchContainer = styled.div`
+const SearchContainer = styled.div<{ selected: boolean }>`
   position: relative;
   background-color: ${(p) => p.theme.colors.primaryBackground};
   margin: 16px auto;
@@ -18,10 +18,10 @@ const SearchContainer = styled.div`
   height: 66px;
   display: flex;
   justify-content: center;
-  background-color: ${(p: { selected: boolean }) => {
+  background-color: ${(p) => {
     return p.selected
-      ? "#f7f7f7"
-      : "#ffffff"; /** use theme background colors */
+      ? p.theme.colors.lighterPrimaryBackground
+      : p.theme.colors.primaryBackground;
   }};
 `;
 
@@ -71,12 +71,10 @@ const SearchBar: React.FC = () => {
           )
         }
       />
-      <SearchItem
+      <GuestsSelector
         onClick={() => setSelectedSearchOption(ComponentId.Guests)}
         selected={getSelectedStatus(ComponentId.Guests)}
-      >
-        <div>Guests</div>
-      </SearchItem>
+      />
     </SearchContainer>
   );
 };

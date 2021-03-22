@@ -8,8 +8,9 @@ declare module "styled-components" {
       lighterPrimaryBackground: string;
       secondaryBackground: string;
       primaryTitleText: string;
-      primaryText: string;
-      secondaryText: string;
+      primaryComponent: string;
+      secondaryComponent: string;
+      secondaryLighterComponent: string;
       alternativePrimary: string;
       alternativeSecondary: string;
     };
@@ -39,8 +40,9 @@ export const mainTheme: DefaultTheme = {
     lighterPrimaryBackground: "#F7F7F7",
     secondaryBackground: "#EBEBEB",
     primaryTitleText: "#FFFFFF",
-    primaryText: "#222222",
-    secondaryText: "#717171",
+    primaryComponent: "#222222",
+    secondaryComponent: "#717171",
+    secondaryLighterComponent: "#B0B0B0",
     alternativePrimary: "##008489",
     alternativeSecondary: "#FC642D",
   },
