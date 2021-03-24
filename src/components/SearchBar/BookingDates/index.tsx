@@ -14,19 +14,17 @@ import type { FocusedInputShape } from "react-dates";
 import SearchInput from "../common/SearchInput";
 
 const DateSelectorContainer = styled.div`
-  background-color: ${(p) => p.theme.colors.primaryBackground};
-  position: absolute;
-  overflow-y: auto;
-  border-radius: 32px;
-  margin-top: 12px;
-  padding: 16px 0px;
-  z-index: 1;
   max-height: calc(100vh - 220px);
   width: 100%;
   position: absolute;
-  left: 0px;
-  right: 0px;
+  left: 0;
+  right: 0;
   top: 100%;
+  overflow-y: auto;
+  background-color: ${(p) => p.theme.colors.primaryBackground};
+  border-radius: 32px;
+  margin-top: 12px;
+  padding: 16px 0px;
 `;
 
 interface DatesSelectorProps {

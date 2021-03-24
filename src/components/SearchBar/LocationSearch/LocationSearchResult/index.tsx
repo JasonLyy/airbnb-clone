@@ -6,15 +6,16 @@ import PreviousSearchIconImage from "../../../../assets/recent-search-icon.svg";
 import NearbyDestinationImage from "../../../../assets/map-icon.png";
 
 const SearchResultPreview = styled.div`
-  background-color: ${(p) => p.theme.colors.primaryBackground};
   position: absolute;
-  overflow-y: auto;
   width: 517px;
+  max-height: calc(100vh - 220px);
+  left: 0px;
+  top: 100%;
+  overflow-y: auto;
+  background-color: ${(p) => p.theme.colors.primaryBackground};
   border-radius: 32px;
   margin-top: 12px;
   padding: 32px 0px;
-  z-index: 1;
-  max-height: calc(100vh - 220px);
 `;
 
 const RecentSearchesDivider = styled.div`

@@ -9,15 +9,12 @@ import GuestsSelector from "./GuestsSelector";
 
 const SearchContainer = styled.div<{ selected: boolean }>`
   position: relative;
-  background-color: ${(p) => p.theme.colors.primaryBackground};
   margin: 16px auto;
   border: 1px solid #dddddd;
   border-radius: 32px;
   width: 100%;
-  max-width: 850px; //temp
   height: 66px;
   display: flex;
-  justify-content: center;
   background-color: ${(p) => {
     return p.selected
       ? p.theme.colors.lighterPrimaryBackground
@@ -41,6 +38,7 @@ const SearchBar: React.FC = () => {
   });
 
   //todo: Refactor how to represent when a component is selected. Current solution is 🤮. Possibly dynamically generate the options?
+  //todo: Refactor SearchContainer and all child components. Learning exercise
   return (
     <SearchContainer
       ref={searchContainerRef}
@@ -71,6 +69,7 @@ const SearchBar: React.FC = () => {
           )
         }
       />
+
       <GuestsSelector
         onClick={() => setSelectedSearchOption(ComponentId.Guests)}
         selected={getSelectedStatus(ComponentId.Guests)}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const Container = styled.div`
+const InputContainer = styled.div`
   padding: 15px 32px;
 `;
 
@@ -10,9 +10,10 @@ const InputHeading = styled.div`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  background-color: transparent;
   border: none;
   outline: none;
-  background-color: transparent;
 `;
 
 interface SearchInputProps {
@@ -31,6 +32,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   onTextChange,
   text,
   disabled = false,
+  children,
 }) => {
   const [inputFocused, setInputFocused] = useState(false);
 
@@ -40,18 +42,21 @@ const SearchInput: React.FC<SearchInputProps> = ({
   };
 
   return (
-    <Container onClick={() => setInputFocused(true)}>
-      <InputHeading>{title}</InputHeading>
-      <Input
-        placeholder={placeholder}
-        ref={(input) => inputFocused && input?.focus()}
-        onBlur={() => onInputFocusChanged(false)}
-        onFocus={() => onInputFocusChanged(true)}
-        onChange={(input) => onTextChange && onTextChange(input.target.value)}
-        disabled={disabled}
-        value={text}
-      />
-    </Container>
+    <div onClick={() => setInputFocused(true)}>
+      <InputContainer>
+        <InputHeading>{title}</InputHeading>
+        <Input
+          placeholder={placeholder}
+          ref={(input) => inputFocused && input?.focus()}
+          onBlur={() => onInputFocusChanged(false)}
+          onFocus={() => onInputFocusChanged(true)}
+          onChange={(input) => onTextChange && onTextChange(input.target.value)}
+          disabled={disabled}
+          value={text}
+        />
+      </InputContainer>
+      {children}
+    </div>
   );
 };
 

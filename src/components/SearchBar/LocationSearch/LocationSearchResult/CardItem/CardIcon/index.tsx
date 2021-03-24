@@ -2,12 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 const CardIconContainer = styled.div`
-  overflow: hidden;
-  border-radius: 8px;
-  min-width: 48px;
-  min-height: 48px;
   display: flex;
   align-items: center;
+  height: 100%;
+  overflow: hidden;
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: 8px;
   background-color: ${(p) => p.theme.colors.secondaryBackground};
   border: 1px solid
     rgba(
@@ -16,7 +17,6 @@ const CardIconContainer = styled.div`
       176,
       ${(p: CardIconProps) => (p.disableBorder ? "0" : "0.2")}
     );
-  height: 100%;
 `;
 
 type CardIconProps = {

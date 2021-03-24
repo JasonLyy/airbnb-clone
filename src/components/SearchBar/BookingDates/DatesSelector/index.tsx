@@ -8,7 +8,12 @@ import "react-dates/lib/css/_datepicker.css";
 const DatesSelectorContainer = styled.div`
   .DayPicker__horizontal {
     margin: auto;
-    font-family: "Airbnb Cereal App Light";
+    font-family: "Airbnb Cereal App Light", Roboto, "Helvetica Neue", sans-serif,
+      Arial;
+    border: 0px;
+  }
+
+  .CalendarDay__default {
     border: 0px;
   }
 
@@ -31,10 +36,6 @@ const DatesSelectorContainer = styled.div`
 
   .CalendarMonth_table {
     border-collapse: separate;
-  }
-
-  .CalendarDay__default {
-    border: 0px;
   }
 
   .CalendarDay__hovered_span {

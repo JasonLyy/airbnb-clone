@@ -7,7 +7,9 @@ const AppContainer = styled.div``;
 const App: React.FC = () => {
   return (
     <AppContainer>
-      <SearchBar />
+      <div style={{ maxWidth: "850px", margin: "auto" }}>
+        <SearchBar />
+      </div>
     </AppContainer>
   );
 };

@@ -4,26 +4,23 @@ import GuestTypeQuantity from "./GuestTypeQuantity";
 import { useMinMaxQuantity } from "../../../../hooks/minMaxQuantity";
 
 const GuestsSelectorDropdownContainer = styled.div`
-  background-color: ${(p) => p.theme.colors.primaryBackground};
   position: absolute;
-  overflow-y: auto;
-  border-radius: 32px;
-  margin-top: 12px;
-  padding: 16px 0px;
-  z-index: 1;
-  max-height: calc(100vh - 220px);
   width: 394px;
-  position: absolute;
-  right: 0px;
+  max-height: calc(100vh - 220px);
   top: 100%;
+  right: 0px;
+  overflow-y: auto;
+  background-color: ${(p) => p.theme.colors.primaryBackground};
+  margin-top: 12px;
   padding: 16px 32px;
+  border-radius: 32px;
 `;
 
 interface GuestsSelectorDropdownProps {
   test?: boolean;
 }
 
-const GuestsSelectorDropdown: React.FC<GuestsSelectorDropdownProps> = ({}) => {
+const GuestsSelectorDropdown: React.FC<GuestsSelectorDropdownProps> = () => {
   const [
     decrementAdults,
     incrementAdults,

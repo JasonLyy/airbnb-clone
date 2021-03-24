@@ -12,8 +12,7 @@ const GuestTypeQuantityContainer = styled.div<GuestTypeQuantityContainerProps>`
   justify-content: space-between;
   border-bottom: ${(p) =>
     p.showDivider && `1px solid ${p.theme.colors.secondaryBackground}`};
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding: 16px 0px;
 `;
 
 const GuestTypeRowQuantity = styled.div`
