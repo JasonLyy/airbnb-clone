@@ -4,6 +4,7 @@ import VerticalDivider from "../shared/VerticalDivider";
 import LocationSearch from "./LocationSearch/index";
 import BookingDates from "./BookingDates";
 import { useOutsideAlerter } from "../../hooks/outsideAlerter";
+import useGuestSelector, { Actions } from "./GuestsSelector/useGuestsSelector";
 import { ComponentId } from "./enums";
 import GuestsSelector from "./GuestsSelector";
 
@@ -35,6 +36,16 @@ const SearchBar: React.FC = () => {
 
   useOutsideAlerter(searchContainerRef, () => {
     setSelectedSearchOption(null);
+  });
+
+  const [
+    guestsState,
+    dispatchGuestSelectorAction,
+    canUpdateGuestsValue,
+  ] = useGuestSelector({
+    adults: 16,
+    children: 5,
+    infants: 5,
   });
 
   //todo: Refactor how to represent when a component is selected. Current solution is 🤮. Possibly dynamically generate the options?
@@ -73,6 +84,13 @@ const SearchBar: React.FC = () => {
       <GuestsSelector
         onClick={() => setSelectedSearchOption(ComponentId.Guests)}
         selected={getSelectedStatus(ComponentId.Guests)}
+        guestsState={guestsState}
+        dispatchGuestsSelectorAction={(actions: Actions) =>
+          dispatchGuestSelectorAction({
+            type: actions,
+          })
+        }
+        canUpdateGuestsValue={canUpdateGuestsValue}
       />
     </SearchContainer>
   );

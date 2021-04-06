@@ -35,46 +35,40 @@ const PreviousSearchIcon = styled(PreviousSearchIconImage)`
 
 type LocationSearchProps = {
   inputText: SearchInput;
-  isVisible: boolean;
 };
 
-const LocationSearch: React.FC<LocationSearchProps> = ({
-  inputText,
-  isVisible,
-}) => {
+const LocationSearch: React.FC<LocationSearchProps> = ({ inputText }) => {
   // console.log("Used later: ", inputText);
   return (
     <>
-      {isVisible && (
-        <SearchResultPreview>
-          <CardItem
-            cardIcon={<NearbySearchIcon />}
-            cardText="Nearby Destinations"
-            disableBorder
-          />
-          <RecentSearchesDivider>Recent Searches</RecentSearchesDivider>
-          <CardItem
-            cardIcon={<PreviousSearchIcon />}
-            cardText="Apollo Bay (Placeholder)"
-          />
-          <CardItem
-            cardIcon={<PreviousSearchIcon />}
-            cardText="Apollo Bay (Placeholder)"
-          />
-          <CardItem
-            cardIcon={<PreviousSearchIcon />}
-            cardText="Apollo Bay (Placeholder)"
-          />
-          <CardItem
-            cardIcon={<PreviousSearchIcon />}
-            cardText="Apollo Bay (Placeholder)"
-          />
-          <CardItem
-            cardIcon={<PreviousSearchIcon />}
-            cardText="Apollo Bay (Placeholder)"
-          />
-        </SearchResultPreview>
-      )}
+      <SearchResultPreview>
+        <CardItem
+          cardIcon={<NearbySearchIcon />}
+          cardText="Nearby Destinations"
+          disableBorder
+        />
+        <RecentSearchesDivider>Recent Searches</RecentSearchesDivider>
+        <CardItem
+          cardIcon={<PreviousSearchIcon />}
+          cardText="Apollo Bay (Placeholder)"
+        />
+        <CardItem
+          cardIcon={<PreviousSearchIcon />}
+          cardText="Apollo Bay (Placeholder)"
+        />
+        <CardItem
+          cardIcon={<PreviousSearchIcon />}
+          cardText="Apollo Bay (Placeholder)"
+        />
+        <CardItem
+          cardIcon={<PreviousSearchIcon />}
+          cardText="Apollo Bay (Placeholder)"
+        />
+        <CardItem
+          cardIcon={<PreviousSearchIcon />}
+          cardText="Apollo Bay (Placeholder)"
+        />
+      </SearchResultPreview>
     </>
   );
 };

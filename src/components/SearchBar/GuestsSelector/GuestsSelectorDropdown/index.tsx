@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import GuestTypeQuantity from "./GuestTypeQuantity";
-import { useMinMaxQuantity } from "../../../../hooks/minMaxQuantity";
+import {
+  Actions,
+  GuestsState,
+  AdultsAction,
+  ChildrenAction,
+  InfantsAction,
+} from "../useGuestsSelector";
 
 const GuestsSelectorDropdownContainer = styled.div`
   position: absolute;
@@ -17,66 +23,48 @@ const GuestsSelectorDropdownContainer = styled.div`
 `;
 
 interface GuestsSelectorDropdownProps {
-  test?: boolean;
+  guestsState: GuestsState;
+  dispatchGuestsSelectorAction: (action: Actions) => void;
+  canUpdateGuestsValue: (action: Actions) => boolean;
 }
 
-const GuestsSelectorDropdown: React.FC<GuestsSelectorDropdownProps> = () => {
-  const [
-    decrementAdults,
-    incrementAdults,
-    reachedMinAdults,
-    reachedMaxAdults,
-    adultCount,
-  ] = useMinMaxQuantity(0, 16);
-
-  const [
-    decrementChildren,
-    incrementChildren,
-    reachedMinChildren,
-    reachedMaxChildren,
-    childrenCount,
-  ] = useMinMaxQuantity(0, 5);
-
-  const [
-    decrementInfants,
-    incrementInfants,
-    reachedMinInfants,
-    reachedMaxInfants,
-    infantsCount,
-  ] = useMinMaxQuantity(0, 5);
-
+const GuestsSelectorDropdown: React.FC<GuestsSelectorDropdownProps> = ({
+  guestsState,
+  dispatchGuestsSelectorAction,
+  canUpdateGuestsValue,
+}) => {
   return (
     <GuestsSelectorDropdownContainer>
       <GuestTypeQuantity
         title="Adults"
         subtitle="Ages 13 or above"
-        decrement={decrementAdults}
-        increment={incrementAdults}
-        reachedMin={reachedMinAdults}
-        reachedMax={reachedMaxAdults}
-        value={adultCount}
+        decrement={() => dispatchGuestsSelectorAction(AdultsAction.Decrement)}
+        increment={() => dispatchGuestsSelectorAction(AdultsAction.Increment)}
+        reachedMin={!canUpdateGuestsValue(AdultsAction.Decrement)}
+        reachedMax={!canUpdateGuestsValue(AdultsAction.Increment)}
+        value={guestsState.adults}
         showDivider
       />
 
       <GuestTypeQuantity
         title="Children"
         subtitle="Ages 2-12"
-        decrement={decrementChildren}
-        increment={incrementChildren}
-        reachedMin={reachedMinChildren}
-        reachedMax={reachedMaxChildren}
-        value={childrenCount}
+        decrement={() => dispatchGuestsSelectorAction(ChildrenAction.Decrement)}
+        increment={() => dispatchGuestsSelectorAction(ChildrenAction.Increment)}
+        reachedMin={!canUpdateGuestsValue(ChildrenAction.Decrement)}
+        reachedMax={!canUpdateGuestsValue(ChildrenAction.Increment)}
+        value={guestsState.children}
         showDivider
       />
 
       <GuestTypeQuantity
         title="Infants"
         subtitle="Under 2"
-        decrement={decrementInfants}
-        increment={incrementInfants}
-        reachedMin={reachedMinInfants}
-        reachedMax={reachedMaxInfants}
-        value={infantsCount}
+        decrement={() => dispatchGuestsSelectorAction(InfantsAction.Decrement)}
+        increment={() => dispatchGuestsSelectorAction(InfantsAction.Increment)}
+        reachedMin={!canUpdateGuestsValue(InfantsAction.Decrement)}
+        reachedMax={!canUpdateGuestsValue(InfantsAction.Increment)}
+        value={guestsState.infants}
       />
     </GuestsSelectorDropdownContainer>
   );

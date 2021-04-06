@@ -56,7 +56,6 @@ const BookingDates: React.FC<DatesSelectorProps> = ({
   const onCalendarFocusChange: OnFocusChange = (focusedShape) => {
     // calendar MUST be focused for dates to be selected. null can happen when you have selected startDate and endDate.
     // force it to keep endDate selected
-
     if (!focusedShape) {
       setFocusedCalendarDate(END_DATE);
       setSelectedId(ComponentId.CheckOutDate);
