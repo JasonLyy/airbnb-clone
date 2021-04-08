@@ -39,6 +39,8 @@ const SearchBar: React.FC = () => {
     setSelectedSearchOption(null);
   });
 
+  const [locationText, setLocationText] = useState<string>();
+
   const [
     guestsState,
     dispatchGuestSelectorAction,
@@ -62,6 +64,8 @@ const SearchBar: React.FC = () => {
       <LocationSearch
         onClick={() => setSelectedSearchOption(ComponentId.LocationSearch)}
         selected={getSelectedStatus(ComponentId.LocationSearch)}
+        locationText={locationText}
+        setLocationText={(t?: string) => setLocationText(t)}
       />
       <VerticalDivider
         transparent={
