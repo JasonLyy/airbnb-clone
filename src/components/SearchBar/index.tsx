@@ -7,6 +7,7 @@ import { useOutsideAlerter } from "../../hooks/outsideAlerter";
 import useGuestSelector, { Actions } from "./GuestsSelector/useGuestsSelector";
 import { ComponentId } from "./enums";
 import GuestsSelector from "./GuestsSelector";
+import type { Moment } from "moment";
 
 const SearchContainer = styled.div<{ selected: boolean }>`
   position: relative;
@@ -48,6 +49,9 @@ const SearchBar: React.FC = () => {
     infants: 5,
   });
 
+  const [startDate, setStartDate] = useState<Moment | null>(null);
+  const [endDate, setEndDate] = useState<Moment | null>(null);
+
   //todo: Refactor how to represent when a component is selected. Current solution is 🤮. Possibly dynamically generate the options?
   //todo: Refactor SearchContainer and all child components. Learning exercise
   return (
@@ -71,6 +75,10 @@ const SearchBar: React.FC = () => {
         getSelectedStatus={getSelectedStatus}
         setSelectedId={(id: ComponentId) => setSelectedSearchOption(id)}
         selectedId={selectedSearchOption}
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={(d: Moment | null) => setStartDate(d)}
+        setEndDate={(d: Moment | null) => setEndDate(d)}
       />
       <VerticalDivider
         transparent={

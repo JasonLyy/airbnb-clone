@@ -31,15 +31,20 @@ interface DatesSelectorProps {
   selectedId: ComponentId | null;
   setSelectedId: (id: ComponentId) => void;
   getSelectedStatus: (id: ComponentId) => boolean | null;
+  startDate: Moment | null;
+  endDate: Moment | null;
+  setStartDate: (d: Moment | null) => void;
+  setEndDate: (d: Moment | null) => void;
 }
 
 const BookingDates: React.FC<DatesSelectorProps> = ({
   getSelectedStatus,
   setSelectedId,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
 }) => {
-  const [startDate, setStartDate] = useState<Moment | null>(null);
-  const [endDate, setEndDate] = useState<Moment | null>(null);
-
   const [
     focusedCalendarDate,
     setFocusedCalendarDate,
