@@ -13,6 +13,12 @@ const Button = styled.button`
   margin-top: 8px;
   margin-right: 8px;
   overflow: hidden;
+  outline: none;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${(p) => p.theme.colors.primaryDarker};
+  }
 `;
 
 const SearchButton: React.FC = () => {

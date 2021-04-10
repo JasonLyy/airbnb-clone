@@ -4,6 +4,7 @@ declare module "styled-components" {
   export interface DefaultTheme extends FontWeights {
     colors: {
       primary: string;
+      primaryDarker: string;
       primaryBackground: string;
       lighterPrimaryBackground: string;
       secondaryBackground: string;
@@ -35,7 +36,8 @@ const fontWeights = {
 
 export const mainTheme: DefaultTheme = {
   colors: {
-    primary: "#FF5A5F",
+    primary: "#FF385C",
+    primaryDarker: "#E31C5F",
     primaryBackground: "#FFFFFF",
     lighterPrimaryBackground: "#F7F7F7",
     secondaryBackground: "#EBEBEB",

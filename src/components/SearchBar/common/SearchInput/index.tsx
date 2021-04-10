@@ -3,6 +3,10 @@ import styled from "styled-components";
 
 const InputContainer = styled.div`
   padding: 15px 32px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const InputHeading = styled.div`
