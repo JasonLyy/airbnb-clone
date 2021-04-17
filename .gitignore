@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.DS_Store
+db/volume
+db/pgadmin_servers
