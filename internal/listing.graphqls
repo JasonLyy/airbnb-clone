@@ -1,0 +1,29 @@
+type Listing {
+  id: ID!
+  name: String!
+  description: String
+  neighbourhoodOverview: String
+  pictureUrl: String
+  neighbourhood: String
+  neighbourhoodCleansed: String
+  latitude: Float
+  longitude: Float
+  propertyType: String
+  roomType: String
+  accommodates: Int
+  bathrooms: Int
+  bathroomsText: String
+  bedrooms: Int
+  beds: Int
+  amenities: StringArray!
+  price: Float
+  minimumNights: Int
+  maximumNights: Int
+  hostId: String
+}
+
+type Query {
+  listings: [Listing!]!
+}
+
+scalar StringArray

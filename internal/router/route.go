@@ -13,7 +13,8 @@ func Init(db *gorm.DB) *echo.Echo {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/homes", api.GetListings(db))
+	e.POST("/graphql", api.GraphQl(db))
+	e.GET("/graphql/playground", api.GraphQlPlayground(db))
 
 	return e
 }
