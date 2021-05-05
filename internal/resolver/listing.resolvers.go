@@ -11,9 +11,18 @@ import (
 	"github.com/JasonLyy/airbnb-clone-server/internal/model"
 )
 
-func (r *queryResolver) Listings(ctx context.Context) ([]*model.Listing, error) {
-	listing := model.Listing{}
-	return listing.GetAllListings(db.Db)
+func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error) {
+	db, err := paginatedDb(db.Db, "listing_id", page)
+	if err != nil {
+		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
+	}
+
+	var listings []*model.Listing
+	if err := db.Find(&listings).Error; err != nil {
+		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
+	}
+
+	return listingsToConnection(listings, page), nil
 }
 
 // Query returns generated.QueryResolver implementation.

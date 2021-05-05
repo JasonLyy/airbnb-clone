@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/lib/pq"
-	"gorm.io/gorm"
 )
 
 type Listing struct {
@@ -29,14 +28,9 @@ type Listing struct {
 	HostId                string         `json:"host"`
 }
 
+// required for gqlgen to generate.
+func (Listing) IsNode() {}
+
 func (*Listing) TableName() string {
 	return "listings"
-}
-
-func (*Listing) GetAllListings(db *gorm.DB) ([]*Listing, error) {
-	var listings []*Listing
-
-	err := db.Limit(10).Find(&listings).Error
-
-	return listings, err
 }

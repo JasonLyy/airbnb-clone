@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -13,7 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/JasonLyy/airbnb-clone-server/internal/model"
-	scalar "github.com/JasonLyy/airbnb-clone-server/scalars"
+	scalar "github.com/JasonLyy/airbnb-clone-server/internal/scalars"
 	"github.com/lib/pq"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -68,13 +69,30 @@ type ComplexityRoot struct {
 		RoomType              func(childComplexity int) int
 	}
 
+	ListingConnection struct {
+		Edges    func(childComplexity int) int
+		PageInfo func(childComplexity int) int
+	}
+
+	ListingEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	PageInfo struct {
+		EndCursor       func(childComplexity int) int
+		HasNextPage     func(childComplexity int) int
+		HasPreviousPage func(childComplexity int) int
+		StartCursor     func(childComplexity int) int
+	}
+
 	Query struct {
-		Listings func(childComplexity int) int
+		Listings func(childComplexity int, page model.PaginationInput) int
 	}
 }
 
 type QueryResolver interface {
-	Listings(ctx context.Context) ([]*model.Listing, error)
+	Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error)
 }
 
 type executableSchema struct {
@@ -239,12 +257,73 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Listing.RoomType(childComplexity), true
 
+	case "ListingConnection.edges":
+		if e.complexity.ListingConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.ListingConnection.Edges(childComplexity), true
+
+	case "ListingConnection.pageInfo":
+		if e.complexity.ListingConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ListingConnection.PageInfo(childComplexity), true
+
+	case "ListingEdge.cursor":
+		if e.complexity.ListingEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ListingEdge.Cursor(childComplexity), true
+
+	case "ListingEdge.node":
+		if e.complexity.ListingEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ListingEdge.Node(childComplexity), true
+
+	case "PageInfo.endCursor":
+		if e.complexity.PageInfo.EndCursor == nil {
+			break
+		}
+
+		return e.complexity.PageInfo.EndCursor(childComplexity), true
+
+	case "PageInfo.hasNextPage":
+		if e.complexity.PageInfo.HasNextPage == nil {
+			break
+		}
+
+		return e.complexity.PageInfo.HasNextPage(childComplexity), true
+
+	case "PageInfo.hasPreviousPage":
+		if e.complexity.PageInfo.HasPreviousPage == nil {
+			break
+		}
+
+		return e.complexity.PageInfo.HasPreviousPage(childComplexity), true
+
+	case "PageInfo.startCursor":
+		if e.complexity.PageInfo.StartCursor == nil {
+			break
+		}
+
+		return e.complexity.PageInfo.StartCursor(childComplexity), true
+
 	case "Query.listings":
 		if e.complexity.Query.Listings == nil {
 			break
 		}
 
-		return e.complexity.Query.Listings(childComplexity), true
+		args, err := ec.field_Query_listings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Listings(childComplexity, args["page"].(model.PaginationInput)), true
 
 	}
 	return 0, false
@@ -296,7 +375,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "internal/listing.graphqls", Input: `type Listing {
+	{Name: "internal/listing.graphqls", Input: `type Listing implements Node {
   id: ID!
   name: String!
   description: String
@@ -320,11 +399,47 @@ var sources = []*ast.Source{
   hostId: String
 }
 
+type ListingConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [ListingEdge]!
+}
+
+type ListingEdge implements Edge {
+  cursor: String!
+  node: Listing!
+}
+
 type Query {
-  listings: [Listing!]!
+  listings(page: PaginationInput!): ListingConnection!
 }
 
 scalar StringArray
+`, BuiltIn: false},
+	{Name: "internal/pages.graphqls", Input: `type PageInfo {
+  startCursor: String!
+  endCursor: String!
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
+  edges: [Edge]!
+}
+
+interface Edge {
+  cursor: String!
+  node: Node!
+}
+
+interface Node {
+  id: ID!
+}
+
+input PaginationInput {
+  first: Int
+  after: String
+}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -345,6 +460,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PaginationInput
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPaginationInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
 	return args, nil
 }
 
@@ -1067,6 +1197,286 @@ func (ec *executionContext) _Listing_hostId(ctx context.Context, field graphql.C
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ListingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.ListingConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ListingConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.ListingConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ListingConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ListingEdge)
+	fc.Result = res
+	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.ListingEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ListingEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListingEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.ListingEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ListingEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Listing)
+	fc.Result = res
+	return ec.marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartCursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EndCursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasPreviousPage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasNextPage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1083,9 +1493,16 @@ func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.C
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listings_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Listings(rctx)
+		return ec.resolvers.Query().Listings(rctx, args["page"].(model.PaginationInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1097,9 +1514,9 @@ func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Listing)
+	res := resTmp.(*model.ListingConnection)
 	fc.Result = res
-	return ec.marshalNListing2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingᚄ(ctx, field.Selections, res)
+	return ec.marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2260,15 +2677,91 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputPaginationInput(ctx context.Context, obj interface{}) (model.PaginationInput, error) {
+	var it model.PaginationInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "first":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+			it.First, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "after":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+			it.After, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
+
+func (ec *executionContext) _Connection(ctx context.Context, sel ast.SelectionSet, obj model.Connection) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.ListingConnection:
+		return ec._ListingConnection(ctx, sel, &obj)
+	case *model.ListingConnection:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ListingConnection(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func (ec *executionContext) _Edge(ctx context.Context, sel ast.SelectionSet, obj model.Edge) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.ListingEdge:
+		return ec._ListingEdge(ctx, sel, &obj)
+	case *model.ListingEdge:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ListingEdge(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj model.Node) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.Listing:
+		return ec._Listing(ctx, sel, &obj)
+	case *model.Listing:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Listing(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
 
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
 
-var listingImplementors = []string{"Listing"}
+var listingImplementors = []string{"Listing", "Node"}
 
 func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, obj *model.Listing) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, listingImplementors)
@@ -2330,6 +2823,112 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Listing_maximumNights(ctx, field, obj)
 		case "hostId":
 			out.Values[i] = ec._Listing_hostId(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var listingConnectionImplementors = []string{"ListingConnection", "Connection"}
+
+func (ec *executionContext) _ListingConnection(ctx context.Context, sel ast.SelectionSet, obj *model.ListingConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listingConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ListingConnection")
+		case "pageInfo":
+			out.Values[i] = ec._ListingConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._ListingConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var listingEdgeImplementors = []string{"ListingEdge", "Edge"}
+
+func (ec *executionContext) _ListingEdge(ctx context.Context, sel ast.SelectionSet, obj *model.ListingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listingEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ListingEdge")
+		case "cursor":
+			out.Values[i] = ec._ListingEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "node":
+			out.Values[i] = ec._ListingEdge_node(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var pageInfoImplementors = []string{"PageInfo"}
+
+func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *model.PageInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pageInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PageInfo")
+		case "startCursor":
+			out.Values[i] = ec._PageInfo_startCursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "endCursor":
+			out.Values[i] = ec._PageInfo_endCursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hasPreviousPage":
+			out.Values[i] = ec._PageInfo_hasPreviousPage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hasNextPage":
+			out.Values[i] = ec._PageInfo_hasNextPage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2660,7 +3259,31 @@ func (ec *executionContext) marshalNID2int64(ctx context.Context, sel ast.Select
 	return res
 }
 
-func (ec *executionContext) marshalNListing2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Listing) graphql.Marshaler {
+func (ec *executionContext) marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx context.Context, sel ast.SelectionSet, v *model.Listing) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Listing(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNListingConnection2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v model.ListingConnection) graphql.Marshaler {
+	return ec._ListingConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v *model.ListingConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ListingConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v []*model.ListingEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2684,7 +3307,7 @@ func (ec *executionContext) marshalNListing2ᚕᚖgithubᚗcomᚋJasonLyyᚋairb
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx, sel, v[i])
+			ret[i] = ec.marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2697,14 +3320,19 @@ func (ec *executionContext) marshalNListing2ᚕᚖgithubᚗcomᚋJasonLyyᚋairb
 	return ret
 }
 
-func (ec *executionContext) marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx context.Context, sel ast.SelectionSet, v *model.Listing) graphql.Marshaler {
+func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._Listing(ctx, sel, v)
+	return ec._PageInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPaginationInput(ctx context.Context, v interface{}) (model.PaginationInput, error) {
+	res, err := ec.unmarshalInputPaginationInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -3012,6 +3640,28 @@ func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface
 
 func (ec *executionContext) marshalOInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
 	return graphql.MarshalInt64(v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
+}
+
+func (ec *executionContext) marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ListingEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ListingEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

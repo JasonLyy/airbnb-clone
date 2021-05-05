@@ -1,4 +1,4 @@
-type Listing {
+type Listing implements Node {
   id: ID!
   name: String!
   description: String
@@ -22,8 +22,18 @@ type Listing {
   hostId: String
 }
 
+type ListingConnection implements Connection {
+  pageInfo: PageInfo!
+  edges: [ListingEdge]!
+}
+
+type ListingEdge implements Edge {
+  cursor: String!
+  node: Listing!
+}
+
 type Query {
-  listings: [Listing!]!
+  listings(page: PaginationInput!): ListingConnection!
 }
 
 scalar StringArray
