@@ -10,8 +10,23 @@ const GuestSelectorContainer = styled.div`
   display: flex;
 `;
 
+const generateSelectedGuestsText = (guestsState: GuestsState) => {
+  const { adults, children, infants } = guestsState;
+
+  if (infants && adults && children) {
+    return `${adults + children} guests, ${infants} infants`;
+  }
+
+  if (!infants && (adults || children)) {
+    return `${adults + children} guests`;
+  }
+
+  return "";
+};
+
 interface GuestsSelectorProps {
   onClick: () => void;
+  onSearch: () => void;
   selected: boolean | null;
   guestsState: GuestsState;
   dispatchGuestsSelectorAction: (action: Actions) => void;
@@ -20,25 +35,12 @@ interface GuestsSelectorProps {
 
 const GuestsSelector: React.FC<GuestsSelectorProps> = ({
   onClick,
+  onSearch,
   selected,
   guestsState,
   dispatchGuestsSelectorAction,
   canUpdateGuestsValue,
 }) => {
-  const generateSelectedGuestsText = (guestsState: GuestsState) => {
-    const { adults, children, infants } = guestsState;
-
-    if (infants && adults && children) {
-      return `${adults + children} guests, ${infants} infants`;
-    }
-
-    if (!infants && (adults || children)) {
-      return `${adults + children} guests`;
-    }
-
-    return "";
-  };
-
   return (
     <>
       <SearchItem selected={selected} onClick={onClick} flexGrow={1.2}>
@@ -50,7 +52,7 @@ const GuestsSelector: React.FC<GuestsSelectorProps> = ({
             disabled
           />
           {/* todo: SearchButton supports expanding to have Search */}
-          <SearchButton />
+          <SearchButton onButtonClick={onSearch} />
         </GuestSelectorContainer>
       </SearchItem>
 

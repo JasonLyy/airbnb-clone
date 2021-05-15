@@ -73,6 +73,7 @@ const config: webpack.Configuration = {
   },
   devServer: {
     contentBase: path.join(__dirname, "build"),
+    historyApiFallback: true,
     compress: false,
     port: 4000,
   },

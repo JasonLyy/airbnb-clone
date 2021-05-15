@@ -21,9 +21,13 @@ const Button = styled.button`
   }
 `;
 
-const SearchButton: React.FC = () => {
+type SearchButtonProps = {
+  onButtonClick: () => void;
+};
+
+const SearchButton: React.FC<SearchButtonProps> = ({ onButtonClick }) => {
   return (
-    <Button>
+    <Button onClick={onButtonClick}>
       <SearchIcon />
     </Button>
   );
