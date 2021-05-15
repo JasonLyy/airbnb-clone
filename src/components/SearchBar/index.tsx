@@ -35,10 +35,6 @@ const SearchBar: React.FC = () => {
     return selectedSearchOption === id;
   };
 
-  useOutsideAlerter(searchContainerRef, () => {
-    setSelectedSearchOption(null);
-  });
-
   const [locationText, setLocationText] = useState<string>();
 
   const [
@@ -54,8 +50,11 @@ const SearchBar: React.FC = () => {
   const [startDate, setStartDate] = useState<Moment | null>(null);
   const [endDate, setEndDate] = useState<Moment | null>(null);
 
+  useOutsideAlerter(searchContainerRef, () => {
+    setSelectedSearchOption(null);
+  });
+
   //todo: Refactor how to represent when a component is selected. Current solution is 🤮. Possibly dynamically generate the options?
-  //todo: Refactor SearchContainer and all child components. Learning exercise
   return (
     <SearchContainer
       ref={searchContainerRef}
