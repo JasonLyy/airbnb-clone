@@ -6,9 +6,9 @@ package resolver
 import (
 	"context"
 
-	"github.com/JasonLyy/airbnb-clone-server/internal/db"
-	"github.com/JasonLyy/airbnb-clone-server/internal/generated"
-	"github.com/JasonLyy/airbnb-clone-server/internal/model"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/db"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 )
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error) {

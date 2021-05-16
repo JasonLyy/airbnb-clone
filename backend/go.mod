@@ -1,4 +1,4 @@
-module github.com/JasonLyy/airbnb-clone-server
+module github.com/JasonLyy/airbnb-clone/backend
 
 go 1.15
 

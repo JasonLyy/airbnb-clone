@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/JasonLyy/airbnb-clone-server/internal/model"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 	"gorm.io/gorm"
 )
 

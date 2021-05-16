@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/JasonLyy/airbnb-clone-server/internal/api"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/api"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"

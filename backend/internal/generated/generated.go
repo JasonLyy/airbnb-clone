@@ -13,8 +13,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/JasonLyy/airbnb-clone-server/internal/model"
-	scalar "github.com/JasonLyy/airbnb-clone-server/internal/scalars"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
+	scalar "github.com/JasonLyy/airbnb-clone/backend/internal/scalars"
 	"github.com/lib/pq"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -469,7 +469,7 @@ func (ec *executionContext) field_Query_listings_args(ctx context.Context, rawAr
 	var arg0 model.PaginationInput
 	if tmp, ok := rawArgs["page"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
-		arg0, err = ec.unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPaginationInput(ctx, tmp)
+		arg0, err = ec.unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPaginationInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1229,7 +1229,7 @@ func (ec *executionContext) _ListingConnection_pageInfo(ctx context.Context, fie
 	}
 	res := resTmp.(*model.PageInfo)
 	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPageInfo(ctx, field.Selections, res)
+	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPageInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ListingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.ListingConnection) (ret graphql.Marshaler) {
@@ -1264,7 +1264,7 @@ func (ec *executionContext) _ListingConnection_edges(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.ListingEdge)
 	fc.Result = res
-	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx, field.Selections, res)
+	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ListingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.ListingEdge) (ret graphql.Marshaler) {
@@ -1334,7 +1334,7 @@ func (ec *executionContext) _ListingEdge_node(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Listing)
 	fc.Result = res
-	return ec.marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx, field.Selections, res)
+	return ec.marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListing(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
@@ -1516,7 +1516,7 @@ func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*model.ListingConnection)
 	fc.Result = res
-	return ec.marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx, field.Selections, res)
+	return ec.marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3259,7 +3259,7 @@ func (ec *executionContext) marshalNID2int64(ctx context.Context, sel ast.Select
 	return res
 }
 
-func (ec *executionContext) marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListing(ctx context.Context, sel ast.SelectionSet, v *model.Listing) graphql.Marshaler {
+func (ec *executionContext) marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListing(ctx context.Context, sel ast.SelectionSet, v *model.Listing) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3269,11 +3269,11 @@ func (ec *executionContext) marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnb�
 	return ec._Listing(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNListingConnection2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v model.ListingConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNListingConnection2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v model.ListingConnection) graphql.Marshaler {
 	return ec._ListingConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v *model.ListingConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingConnection(ctx context.Context, sel ast.SelectionSet, v *model.ListingConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3283,7 +3283,7 @@ func (ec *executionContext) marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyy
 	return ec._ListingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v []*model.ListingEdge) graphql.Marshaler {
+func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v []*model.ListingEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3307,7 +3307,7 @@ func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3320,7 +3320,7 @@ func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3330,7 +3330,7 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnb
 	return ec._PageInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐPaginationInput(ctx context.Context, v interface{}) (model.PaginationInput, error) {
+func (ec *executionContext) unmarshalNPaginationInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPaginationInput(ctx context.Context, v interface{}) (model.PaginationInput, error) {
 	res, err := ec.unmarshalInputPaginationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -3657,7 +3657,7 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return graphql.MarshalInt(*v)
 }
 
-func (ec *executionContext) marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚑserverᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ListingEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ListingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

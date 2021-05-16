@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/99designs/gqlgen/handler"
-	"github.com/JasonLyy/airbnb-clone-server/internal/generated"
-	"github.com/JasonLyy/airbnb-clone-server/internal/resolver"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/resolver"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )

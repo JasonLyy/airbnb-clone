@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/JasonLyy/airbnb-clone-server/internal/db"
-	"github.com/JasonLyy/airbnb-clone-server/internal/router"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/db"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/router"
 )
 
 func main() {
