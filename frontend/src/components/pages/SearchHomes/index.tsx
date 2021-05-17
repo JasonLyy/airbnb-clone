@@ -1,36 +1,20 @@
 import React from "react";
-import { useQuery } from "react-query";
-import { request, gql } from "graphql-request";
-
-const GET_LISTINGS = gql`
-  query myTestQuery {
-    listings(page: { first: 10, after: "82XCAAAAAAA=" }) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
-      }
-      edges {
-        cursor
-        node {
-          id
-          name
-          amenities
-        }
-      }
-    }
-  }
-`;
-
-const useListings = () => {
-  //   useQuery("listings", async () => {
-  //     c;
-  //   });
-};
+import { useMyTestQueryQuery } from "./__generated__/queries.generated";
 
 const SearchHomes: React.FC = () => {
-  return <div>Search Homes</div>;
+  const { isLoading, data } = useMyTestQueryQuery();
+
+  return (
+    <div>
+      {isLoading ? (
+        <div>Loading</div>
+      ) : (
+        data?.listings.edges.map((listing) => (
+          <div key={listing?.node.id}>{listing?.node.name}</div>
+        ))
+      )}
+    </div>
+  );
 };
 
 export default SearchHomes;

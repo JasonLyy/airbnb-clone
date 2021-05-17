@@ -27,4 +27,14 @@ module.exports = {
       },
     ],
   },
+  ignorePatterns: ["**/*.generated.ts"],
+  overrides: [
+    // we want to name our queries for readability but it doesn't need the variable to be used
+    {
+      files: ["**/*/queries.ts"],
+      rules: {
+        "@typescript-eslint/no-unused-vars": 0,
+      },
+    },
+  ],
 };
