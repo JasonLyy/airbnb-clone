@@ -375,7 +375,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "internal/listing.graphqls", Input: `type Listing implements Node {
+	{Name: "internal/schema/listing.graphqls", Input: `type Listing implements Node {
   id: ID!
   name: String!
   description: String
@@ -415,7 +415,7 @@ type Query {
 
 scalar StringArray
 `, BuiltIn: false},
-	{Name: "internal/pages.graphqls", Input: `type PageInfo {
+	{Name: "internal/schema/pages.graphqls", Input: `type PageInfo {
   startCursor: String!
   endCursor: String!
   hasPreviousPage: Boolean!

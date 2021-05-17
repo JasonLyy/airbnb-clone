@@ -1,8 +1,8 @@
 package api
 
 import (
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/99designs/gqlgen/handler"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/resolver"
 	"github.com/labstack/echo/v4"
@@ -15,8 +15,11 @@ func GraphQl(db *gorm.DB) echo.HandlerFunc {
 			Resolvers: resolver.New(),
 		}
 
-		h := handler.GraphQL(generated.NewExecutableSchema(config))
-		h.ServeHTTP(c.Response(), c.Request())
+		c.Request().Header.Set("Content-Type", "application/json")
+
+		srv := handler.NewDefaultServer(generated.NewExecutableSchema(config))
+		srv.ServeHTTP(c.Response(), c.Request())
+
 		return nil
 	}
 }

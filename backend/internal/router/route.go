@@ -10,10 +10,11 @@ import (
 func Init(db *gorm.DB) *echo.Echo {
 	e := echo.New()
 
+	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.POST("/graphql", api.GraphQl(db))
+	e.Any("/graphql", api.GraphQl(db))
 	e.GET("/graphql/playground", api.GraphQlPlayground(db))
 
 	return e

@@ -1,6 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - internal/*.graphqls
+  - internal/schema/*.graphqls
 
 # Where should the generated server code go?
 exec:
@@ -35,7 +35,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-  - "github.com/JasonLyy/airbnb-clone/backend/internal/model"
+  - "github.com/JasonLyy/airbnb-clone-server/internal/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -55,4 +55,4 @@ models:
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
   StringArray:
-    model: github.com/JasonLyy/airbnb-clone/backend/internal/scalars.StringArray
+    model: github.com/JasonLyy/airbnb-clone-server/internal/scalars.StringArray
