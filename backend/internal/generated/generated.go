@@ -38,6 +38,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Listing() ListingResolver
 	Query() QueryResolver
 }
 
@@ -66,6 +67,8 @@ type ComplexityRoot struct {
 		PictureUrl            func(childComplexity int) int
 		Price                 func(childComplexity int) int
 		PropertyType          func(childComplexity int) int
+		Rating                func(childComplexity int) int
+		Reviews               func(childComplexity int) int
 		RoomType              func(childComplexity int) int
 	}
 
@@ -91,6 +94,10 @@ type ComplexityRoot struct {
 	}
 }
 
+type ListingResolver interface {
+	Reviews(ctx context.Context, obj *model.Listing) (*int, error)
+	Rating(ctx context.Context, obj *model.Listing) (*float64, error)
+}
 type QueryResolver interface {
 	Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error)
 }
@@ -250,6 +257,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Listing.PropertyType(childComplexity), true
 
+	case "Listing.rating":
+		if e.complexity.Listing.Rating == nil {
+			break
+		}
+
+		return e.complexity.Listing.Rating(childComplexity), true
+
+	case "Listing.reviews":
+		if e.complexity.Listing.Reviews == nil {
+			break
+		}
+
+		return e.complexity.Listing.Reviews(childComplexity), true
+
 	case "Listing.roomType":
 		if e.complexity.Listing.RoomType == nil {
 			break
@@ -397,11 +418,13 @@ var sources = []*ast.Source{
   minimumNights: Int
   maximumNights: Int
   hostId: String
+  reviews: Int
+  rating: Float
 }
 
 type ListingConnection implements Connection {
   pageInfo: PageInfo!
-  edges: [ListingEdge]!
+  edges: [ListingEdge!]!
 }
 
 type ListingEdge implements Edge {
@@ -1197,6 +1220,70 @@ func (ec *executionContext) _Listing_hostId(ctx context.Context, field graphql.C
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Listing_reviews(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Listing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Listing().Reviews(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Listing_rating(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Listing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Listing().Rating(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ListingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.ListingConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1264,7 +1351,7 @@ func (ec *executionContext) _ListingConnection_edges(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.ListingEdge)
 	fc.Result = res
-	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx, field.Selections, res)
+	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdgeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ListingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.ListingEdge) (ret graphql.Marshaler) {
@@ -2775,12 +2862,12 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Listing_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Listing_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
 			out.Values[i] = ec._Listing_description(ctx, field, obj)
@@ -2813,7 +2900,7 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 		case "amenities":
 			out.Values[i] = ec._Listing_amenities(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "price":
 			out.Values[i] = ec._Listing_price(ctx, field, obj)
@@ -2823,6 +2910,28 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Listing_maximumNights(ctx, field, obj)
 		case "hostId":
 			out.Values[i] = ec._Listing_hostId(ctx, field, obj)
+		case "reviews":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Listing_reviews(ctx, field, obj)
+				return res
+			})
+		case "rating":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Listing_rating(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3283,7 +3392,7 @@ func (ec *executionContext) marshalNListingConnection2ᚖgithubᚗcomᚋJasonLyy
 	return ec._ListingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v []*model.ListingEdge) graphql.Marshaler {
+func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ListingEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3307,7 +3416,7 @@ func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalNListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3318,6 +3427,16 @@ func (ec *executionContext) marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋ
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ListingEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ListingEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
@@ -3633,6 +3752,21 @@ func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.S
 	return graphql.MarshalFloat(v)
 }
 
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalFloat(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalFloat(*v)
+}
+
 func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface{}) (int64, error) {
 	res, err := graphql.UnmarshalInt64(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3655,13 +3789,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return graphql.MarshalInt(*v)
-}
-
-func (ec *executionContext) marshalOListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ListingEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ListingEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

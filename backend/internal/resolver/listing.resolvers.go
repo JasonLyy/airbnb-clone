@@ -11,6 +11,16 @@ import (
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 )
 
+func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int, error) {
+	val := 45
+	return &val, nil
+}
+
+func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*float64, error) {
+	val := 4.68
+	return &val, nil
+}
+
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error) {
 	db, err := paginatedDb(db.Db, "listing_id", page)
 	if err != nil {
@@ -25,7 +35,11 @@ func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput
 	return listingsToConnection(listings, page), nil
 }
 
+// Listing returns generated.ListingResolver implementation.
+func (r *Resolver) Listing() generated.ListingResolver { return &listingResolver{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type listingResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

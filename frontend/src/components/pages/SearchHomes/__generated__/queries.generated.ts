@@ -20,57 +20,88 @@ function fetcher<TData, TVariables>(query: string, variables?: TVariables) {
     return json.data;
   }
 }
-export type MyTestQueryQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type PageInfoFieldsFragment = (
+  { __typename?: 'PageInfo' }
+  & Pick<Types.PageInfo, 'startCursor' | 'endCursor' | 'hasNextPage' | 'hasPreviousPage'>
+);
+
+export type ListingInfoFieldsFragment = (
+  { __typename?: 'Listing' }
+  & Pick<Types.Listing, 'id' | 'name' | 'price' | 'pictureUrl' | 'accommodates' | 'bedrooms' | 'beds' | 'bathrooms' | 'amenities' | 'reviews' | 'rating'>
+);
+
+export type GetListingsQueryVariables = Types.Exact<{
+  first: Types.Scalars['Int'];
+  after?: Types.Maybe<Types.Scalars['String']>;
+}>;
 
 
-export type MyTestQueryQuery = (
+export type GetListingsQuery = (
   { __typename?: 'Query' }
   & { listings: (
     { __typename?: 'ListingConnection' }
     & { pageInfo: (
       { __typename?: 'PageInfo' }
-      & Pick<Types.PageInfo, 'startCursor' | 'endCursor' | 'hasNextPage' | 'hasPreviousPage'>
-    ), edges: Array<Types.Maybe<(
+      & PageInfoFieldsFragment
+    ), edges: Array<(
       { __typename?: 'ListingEdge' }
       & Pick<Types.ListingEdge, 'cursor'>
       & { node: (
         { __typename?: 'Listing' }
-        & Pick<Types.Listing, 'id' | 'name' | 'amenities'>
+        & ListingInfoFieldsFragment
       ) }
-    )>> }
+    )> }
   ) }
 );
 
-
-export const MyTestQueryDocument = `
-    query myTestQuery {
-  listings(page: {first: 10, after: "82XCAAAAAAA="}) {
+export const PageInfoFieldsFragmentDoc = `
+    fragment PageInfoFields on PageInfo {
+  startCursor
+  endCursor
+  hasNextPage
+  hasPreviousPage
+}
+    `;
+export const ListingInfoFieldsFragmentDoc = `
+    fragment ListingInfoFields on Listing {
+  id
+  name
+  price
+  pictureUrl
+  accommodates
+  bedrooms
+  beds
+  bathrooms
+  amenities
+  reviews
+  rating
+}
+    `;
+export const GetListingsDocument = `
+    query getListings($first: Int!, $after: String) {
+  listings(page: {first: $first, after: $after}) {
     pageInfo {
-      startCursor
-      endCursor
-      hasNextPage
-      hasPreviousPage
+      ...PageInfoFields
     }
     edges {
       cursor
       node {
-        id
-        name
-        amenities
+        ...ListingInfoFields
       }
     }
   }
 }
-    `;
-export const useMyTestQueryQuery = <
-      TData = MyTestQueryQuery,
+    ${PageInfoFieldsFragmentDoc}
+${ListingInfoFieldsFragmentDoc}`;
+export const useGetListingsQuery = <
+      TData = GetListingsQuery,
       TError = unknown
     >(
-      variables?: MyTestQueryQueryVariables, 
-      options?: UseQueryOptions<MyTestQueryQuery, TError, TData>
+      variables: GetListingsQueryVariables, 
+      options?: UseQueryOptions<GetListingsQuery, TError, TData>
     ) => 
-    useQuery<MyTestQueryQuery, TError, TData>(
-      ['myTestQuery', variables],
-      fetcher<MyTestQueryQuery, MyTestQueryQueryVariables>(MyTestQueryDocument, variables),
+    useQuery<GetListingsQuery, TError, TData>(
+      ['getListings', variables],
+      fetcher<GetListingsQuery, GetListingsQueryVariables>(GetListingsDocument, variables),
       options
     );

@@ -20,11 +20,13 @@ type Listing implements Node {
   minimumNights: Int
   maximumNights: Int
   hostId: String
+  reviews: Int
+  rating: Float
 }
 
 type ListingConnection implements Connection {
   pageInfo: PageInfo!
-  edges: [ListingEdge]!
+  edges: [ListingEdge!]!
 }
 
 type ListingEdge implements Edge {

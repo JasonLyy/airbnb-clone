@@ -14,12 +14,10 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AppContainer>
-        <div style={{ maxWidth: "850px", margin: "auto" }}>
-          <Switch>
-            <Route path="/" exact component={Landing} />
-            <Route path="/s/:location?/homes" component={SearchHomes} />
-          </Switch>
-        </div>
+        <Switch>
+          <Route path="/" exact component={Landing} />
+          <Route path="/s/:location?/homes" component={SearchHomes} />
+        </Switch>
       </AppContainer>
       <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>

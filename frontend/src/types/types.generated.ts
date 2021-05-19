@@ -45,12 +45,14 @@ export type Listing = Node & {
   minimumNights?: Maybe<Scalars['Int']>;
   maximumNights?: Maybe<Scalars['Int']>;
   hostId?: Maybe<Scalars['String']>;
+  reviews?: Maybe<Scalars['Int']>;
+  rating?: Maybe<Scalars['Float']>;
 };
 
 export type ListingConnection = Connection & {
   __typename?: 'ListingConnection';
   pageInfo: PageInfo;
-  edges: Array<Maybe<ListingEdge>>;
+  edges: Array<ListingEdge>;
 };
 
 export type ListingEdge = Edge & {

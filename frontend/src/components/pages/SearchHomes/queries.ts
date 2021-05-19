@@ -1,19 +1,43 @@
 import { gql } from "graphql-request";
+
+const PAGE_INFO_FIELDS = gql`
+  fragment PageInfoFields on PageInfo {
+    startCursor
+    endCursor
+    hasNextPage
+    hasPreviousPage
+  }
+`;
+
+const LISTING_FIELDS = gql`
+  fragment ListingInfoFields on Listing {
+    id
+    name
+    price
+    pictureUrl
+    accommodates
+    bedrooms
+    beds
+    bathrooms
+    amenities
+    reviews
+    rating
+  }
+`;
+
 const GET_LISTINGS = gql`
-  query myTestQuery {
-    listings(page: { first: 10, after: "82XCAAAAAAA=" }) {
+  ${PAGE_INFO_FIELDS}
+  ${LISTING_FIELDS}
+
+  query getListings($first: Int!, $after: String) {
+    listings(page: { first: $first, after: $after }) {
       pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
+        ...PageInfoFields
       }
       edges {
         cursor
         node {
-          id
-          name
-          amenities
+          ...ListingInfoFields
         }
       }
     }
