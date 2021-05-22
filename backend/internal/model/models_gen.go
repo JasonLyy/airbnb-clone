@@ -15,8 +15,9 @@ type Node interface {
 }
 
 type ListingConnection struct {
-	PageInfo *PageInfo      `json:"pageInfo"`
-	Edges    []*ListingEdge `json:"edges"`
+	PageInfo     *PageInfo      `json:"pageInfo"`
+	Edges        []*ListingEdge `json:"edges"`
+	TotalResults int            `json:"totalResults"`
 }
 
 func (ListingConnection) IsConnection() {}

@@ -73,8 +73,9 @@ type ComplexityRoot struct {
 	}
 
 	ListingConnection struct {
-		Edges    func(childComplexity int) int
-		PageInfo func(childComplexity int) int
+		Edges        func(childComplexity int) int
+		PageInfo     func(childComplexity int) int
+		TotalResults func(childComplexity int) int
 	}
 
 	ListingEdge struct {
@@ -292,6 +293,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListingConnection.PageInfo(childComplexity), true
 
+	case "ListingConnection.totalResults":
+		if e.complexity.ListingConnection.TotalResults == nil {
+			break
+		}
+
+		return e.complexity.ListingConnection.TotalResults(childComplexity), true
+
 	case "ListingEdge.cursor":
 		if e.complexity.ListingEdge.Cursor == nil {
 			break
@@ -425,6 +433,7 @@ var sources = []*ast.Source{
 type ListingConnection implements Connection {
   pageInfo: PageInfo!
   edges: [ListingEdge!]!
+  totalResults: Int!
 }
 
 type ListingEdge implements Edge {
@@ -1352,6 +1361,41 @@ func (ec *executionContext) _ListingConnection_edges(ctx context.Context, field 
 	res := resTmp.([]*model.ListingEdge)
 	fc.Result = res
 	return ec.marshalNListingEdge2ᚕᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ListingConnection_totalResults(ctx context.Context, field graphql.CollectedField, obj *model.ListingConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ListingConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalResults, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ListingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.ListingEdge) (ret graphql.Marshaler) {
@@ -2964,6 +3008,11 @@ func (ec *executionContext) _ListingConnection(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "totalResults":
+			out.Values[i] = ec._ListingConnection_totalResults(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3360,6 +3409,21 @@ func (ec *executionContext) unmarshalNID2int64(ctx context.Context, v interface{
 
 func (ec *executionContext) marshalNID2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
 	res := graphql.MarshalInt64(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

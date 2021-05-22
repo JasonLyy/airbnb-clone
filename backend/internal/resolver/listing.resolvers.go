@@ -28,11 +28,16 @@ func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput
 	}
 
 	var listings []*model.Listing
-	if err := db.Find(&listings).Error; err != nil {
+
+	results := db.Find(&listings)
+	if results.Error != nil {
 		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
 	}
 
-	return listingsToConnection(listings, page), nil
+	var count int64
+	results.Count(&count)
+
+	return listingsToConnection(listings, page, count), nil
 }
 
 // Listing returns generated.ListingResolver implementation.

@@ -27,6 +27,7 @@ type Listing implements Node {
 type ListingConnection implements Connection {
   pageInfo: PageInfo!
   edges: [ListingEdge!]!
+  totalResults: Int!
 }
 
 type ListingEdge implements Edge {

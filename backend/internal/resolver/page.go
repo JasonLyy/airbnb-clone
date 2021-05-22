@@ -49,7 +49,7 @@ func paginatedDb(db *gorm.DB, col string, page model.PaginationInput) (*gorm.DB,
 }
 
 //todo: need to explore how to make this more generic given that in Golang there is no generic :\
-func listingsToConnection(listings []*model.Listing, page model.PaginationInput) *model.ListingConnection {
+func listingsToConnection(listings []*model.Listing, page model.PaginationInput, count int64) *model.ListingConnection {
 	if len(listings) == 0 {
 		return &model.ListingConnection{PageInfo: &model.PageInfo{}}
 	}
@@ -80,5 +80,5 @@ func listingsToConnection(listings []*model.Listing, page model.PaginationInput)
 	pageInfo.StartCursor = listingEdges[0].Cursor
 	pageInfo.EndCursor = listingEdges[len(listingEdges)-1].Cursor
 
-	return &model.ListingConnection{PageInfo: &pageInfo, Edges: listingEdges}
+	return &model.ListingConnection{PageInfo: &pageInfo, Edges: listingEdges, TotalResults: int(count)}
 }
