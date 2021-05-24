@@ -40,6 +40,7 @@ const GET_LISTINGS = gql`
           ...ListingInfoFields
         }
       }
+      totalResults
     }
   }
 `;

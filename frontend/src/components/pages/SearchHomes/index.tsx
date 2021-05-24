@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Results from "./Results";
 import { useGetListingsQuery } from "./__generated__/queries.generated";
+import { useGetSearchHomesParam } from "./useSearchHomesParams";
+import Pagination from "./Results/Pagination";
 
 const SearchHomeContainer = styled.div`
   background-color: white;
@@ -28,18 +30,37 @@ const SearchHomesFooter = styled.div`
 `;
 
 const SearchHomes: React.FC = () => {
-  const { isLoading, data } = useGetListingsQuery({ first: 40 });
+  const [
+    searchQueryParams,
+    onPreviousClicked,
+    onNextClicked,
+  ] = useGetSearchHomesParam();
 
+  const { isLoading, data } = useGetListingsQuery(searchQueryParams);
   if (!data || isLoading) return <div>loading</div>;
 
-  const listings = data.listings.edges.map((e) => e.node);
+  const {
+    listings: {
+      edges,
+      totalResults,
+      pageInfo: { hasPreviousPage, hasNextPage, endCursor },
+    },
+  } = data;
+  const listings = edges.map((e) => e.node);
 
   return (
     <SearchHomeContainer>
       <SearchHomesHeader>Search Header</SearchHomesHeader>
       <SearchHomesBody>
-        <Results listings={listings} />
-        <SearchHomesMap></SearchHomesMap>
+        <Results listings={listings} totalResults={totalResults}>
+          <Pagination
+            onPreviousClicked={() => onPreviousClicked()}
+            onNextClicked={() => onNextClicked(hasPreviousPage, endCursor)}
+            onPreviousDisabled={!hasPreviousPage}
+            onNextDisabled={!hasNextPage}
+          />
+        </Results>
+        <SearchHomesMap />
       </SearchHomesBody>
       <SearchHomesFooter>Footer</SearchHomesFooter>
     </SearchHomeContainer>

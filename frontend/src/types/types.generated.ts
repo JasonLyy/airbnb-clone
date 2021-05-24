@@ -53,6 +53,7 @@ export type ListingConnection = Connection & {
   __typename?: 'ListingConnection';
   pageInfo: PageInfo;
   edges: Array<ListingEdge>;
+  totalResults: Scalars['Int'];
 };
 
 export type ListingEdge = Edge & {

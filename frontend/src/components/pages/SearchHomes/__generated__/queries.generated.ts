@@ -40,6 +40,7 @@ export type GetListingsQuery = (
   { __typename?: 'Query' }
   & { listings: (
     { __typename?: 'ListingConnection' }
+    & Pick<Types.ListingConnection, 'totalResults'>
     & { pageInfo: (
       { __typename?: 'PageInfo' }
       & PageInfoFieldsFragment
@@ -89,6 +90,7 @@ export const GetListingsDocument = `
         ...ListingInfoFields
       }
     }
+    totalResults
   }
 }
     ${PageInfoFieldsFragmentDoc}

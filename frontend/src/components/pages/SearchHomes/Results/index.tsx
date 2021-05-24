@@ -29,6 +29,7 @@ const Subheading = styled.div`
 
 interface ResultsProps {
   listings: ListingInfoFieldsFragment[];
+  totalResults: number;
 }
 
 //todo: review how we handle nullable options. It could be that these fields aint nullable but ceebs fixing right now.
@@ -70,12 +71,17 @@ const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
     );
   });
 
-const Results: React.FC<ResultsProps> = ({ listings }) => {
+const Results: React.FC<ResultsProps> = ({
+  listings,
+  totalResults,
+  children,
+}) => {
   return (
     <ResultsContainer>
       <Heading>Places to stay near you</Heading>
-      <Subheading>Explore all stays</Subheading>
+      <Subheading>Explore all {totalResults} stays</Subheading>
       {createListingCards(listings)}
+      {children}
     </ResultsContainer>
   );
 };
