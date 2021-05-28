@@ -21,15 +21,25 @@ func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*floa
 	return &val, nil
 }
 
-func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error) {
+func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
 	db, err := paginatedDb(db.Db, "listing_id", page)
 	if err != nil {
 		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
 	}
 
-	var listings []*model.Listing
+	var guestsCount int
+	if input.Adults != nil {
+		guestsCount += *input.Adults
+	}
+	if input.Children != nil {
+		guestsCount += *input.Children
+	}
+	if input.Infants != nil {
+		guestsCount += *input.Infants
+	}
 
-	results := db.Find(&listings)
+	var listings []*model.Listing
+	results := db.Where("accommodates > ?", guestsCount).Where("neighbourhood LIKE ?", input.Location).Find(&listings)
 	if results.Error != nil {
 		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
 	}

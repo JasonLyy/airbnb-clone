@@ -10,6 +10,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   StringArray: any;
+  Time: any;
 };
 
 export type Connection = {
@@ -62,6 +63,15 @@ export type ListingEdge = Edge & {
   node: Listing;
 };
 
+export type ListingsInput = {
+  location: Scalars['String'];
+  checkIn?: Maybe<Scalars['Time']>;
+  checkOut?: Maybe<Scalars['Time']>;
+  adults?: Maybe<Scalars['Int']>;
+  children?: Maybe<Scalars['Int']>;
+  infants?: Maybe<Scalars['Int']>;
+};
+
 export type Node = {
   id: Scalars['ID'];
 };
@@ -87,5 +97,7 @@ export type Query = {
 
 export type QueryListingsArgs = {
   page: PaginationInput;
+  input: ListingsInput;
 };
+
 

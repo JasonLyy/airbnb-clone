@@ -31,8 +31,8 @@ export type ListingInfoFieldsFragment = (
 );
 
 export type GetListingsQueryVariables = Types.Exact<{
-  first: Types.Scalars['Int'];
-  after?: Types.Maybe<Types.Scalars['String']>;
+  page: Types.PaginationInput;
+  input: Types.ListingsInput;
 }>;
 
 
@@ -79,8 +79,8 @@ export const ListingInfoFieldsFragmentDoc = `
 }
     `;
 export const GetListingsDocument = `
-    query getListings($first: Int!, $after: String) {
-  listings(page: {first: $first, after: $after}) {
+    query getListings($page: PaginationInput!, $input: ListingsInput!) {
+  listings(page: $page, input: $input) {
     pageInfo {
       ...PageInfoFields
     }

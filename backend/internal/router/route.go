@@ -11,7 +11,7 @@ func Init(db *gorm.DB) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
-	e.Use(middleware.Logger())
+	// e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.Any("/graphql", api.GraphQl(db))

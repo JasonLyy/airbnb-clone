@@ -39,7 +39,8 @@ const buildSearchQueryLink = (input: {
 
   // don't URL encode so that it's readable by users on first glance
   const destinationEncodedString = locationText
-    ?.replaceAll(",", "--")
+    ?.replace(/ +(?= )/g, "") // strip all spaces greater than 1
+    .replaceAll(", ", "_")
     .replaceAll(" ", "-");
 
   const searchParams = new URLSearchParams();

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -91,7 +92,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Listings func(childComplexity int, page model.PaginationInput) int
+		Listings func(childComplexity int, page model.PaginationInput, input model.ListingsInput) int
 	}
 }
 
@@ -100,7 +101,7 @@ type ListingResolver interface {
 	Rating(ctx context.Context, obj *model.Listing) (*float64, error)
 }
 type QueryResolver interface {
-	Listings(ctx context.Context, page model.PaginationInput) (*model.ListingConnection, error)
+	Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
 }
 
 type executableSchema struct {
@@ -352,7 +353,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Listings(childComplexity, args["page"].(model.PaginationInput)), true
+		return e.complexity.Query.Listings(childComplexity, args["page"].(model.PaginationInput), args["input"].(model.ListingsInput)), true
 
 	}
 	return 0, false
@@ -441,10 +442,20 @@ type ListingEdge implements Edge {
   node: Listing!
 }
 
-type Query {
-  listings(page: PaginationInput!): ListingConnection!
+input ListingsInput {
+  location: String!
+  checkIn: Time
+  checkOut: Time
+  adults: Int
+  children: Int
+  infants: Int
 }
 
+type Query {
+  listings(page: PaginationInput!, input: ListingsInput!): ListingConnection!
+}
+
+scalar Time
 scalar StringArray
 `, BuiltIn: false},
 	{Name: "internal/schema/pages.graphqls", Input: `type PageInfo {
@@ -507,6 +518,15 @@ func (ec *executionContext) field_Query_listings_args(ctx context.Context, rawAr
 		}
 	}
 	args["page"] = arg0
+	var arg1 model.ListingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNListingsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -1633,7 +1653,7 @@ func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Listings(rctx, args["page"].(model.PaginationInput))
+		return ec.resolvers.Query().Listings(rctx, args["page"].(model.PaginationInput), args["input"].(model.ListingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2808,6 +2828,66 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputListingsInput(ctx context.Context, obj interface{}) (model.ListingsInput, error) {
+	var it model.ListingsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+			it.Location, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checkIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkIn"))
+			it.CheckIn, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checkOut":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkOut"))
+			it.CheckOut, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "adults":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adults"))
+			it.Adults, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "children":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("children"))
+			it.Children, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "infants":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infants"))
+			it.Infants, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPaginationInput(ctx context.Context, obj interface{}) (model.PaginationInput, error) {
 	var it model.PaginationInput
 	var asMap = obj.(map[string]interface{})
@@ -3503,6 +3583,11 @@ func (ec *executionContext) marshalNListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋair
 	return ec._ListingEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNListingsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingsInput(ctx context.Context, v interface{}) (model.ListingsInput, error) {
+	res, err := ec.unmarshalInputListingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3877,6 +3962,21 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalTime(*v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

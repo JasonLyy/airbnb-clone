@@ -35,8 +35,18 @@ type ListingEdge implements Edge {
   node: Listing!
 }
 
-type Query {
-  listings(page: PaginationInput!): ListingConnection!
+input ListingsInput {
+  location: String!
+  checkIn: Time
+  checkOut: Time
+  adults: Int
+  children: Int
+  infants: Int
 }
 
+type Query {
+  listings(page: PaginationInput!, input: ListingsInput!): ListingConnection!
+}
+
+scalar Time
 scalar StringArray

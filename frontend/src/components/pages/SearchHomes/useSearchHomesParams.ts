@@ -1,53 +1,76 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { GetListingsQueryVariables } from "./__generated__/queries.generated";
 import queryString from "query-string";
+import { ListingsInput } from "../../../types/types.generated";
 
-type SearchListingsQueryParams = {
-  checkin: string;
-  checkout: string;
-  adults: string;
-  children: string;
-  infants: string;
-  cursor: string;
-  previous: string;
-  next: string;
+type SearchListingsQueryParams = { [K in keyof ListingsInput]: string } & {
+  previous?: string;
+  next?: string;
 };
 
 const SEARCH_QUERY_LIMIT = 10;
 
 const isSearchListingsQueryParams = (search: {
-  [key: string]: string | string[] | null;
+  [K: string]: string | string[] | null;
 }): search is SearchListingsQueryParams => {
   const isValidParam = (key: string, search: { [key: string]: unknown }) => {
     return key in search && typeof search[key] === "string";
   };
 
   return (
-    isValidParam("checkin", search) ||
-    isValidParam("checkout", search) ||
-    isValidParam("adults", search) ||
-    isValidParam("children", search) ||
-    isValidParam("infants", search) ||
-    isValidParam("previous", search) ||
-    isValidParam("next", search)
+    isValidParam("location", search) &&
+    (isValidParam("checkin", search) ||
+      isValidParam("checkout", search) ||
+      isValidParam("adults", search) ||
+      isValidParam("children", search) ||
+      isValidParam("infants", search) ||
+      isValidParam("previous", search) ||
+      isValidParam("next", search))
   );
 };
-
-const getGetListingsQueryParams = (searchQueryParams: {
-  [key: string]: string | string[] | null;
-}): GetListingsQueryVariables => {
+const getGetListingsQueryParams = (
+  searchQueryParams: {
+    [K in keyof ListingsInput]: string | string[] | null;
+  }
+): GetListingsQueryVariables => {
   if (isSearchListingsQueryParams(searchQueryParams)) {
-    if ("previous" in searchQueryParams && "next" in searchQueryParams) {
+    const {
+      location,
+      checkIn,
+      checkOut,
+      adults,
+      infants,
+      children,
+    } = searchQueryParams;
+
+    const input = {
+      location,
+      checkIn,
+      checkOut,
+      ...(adults ? { adults: parseInt(adults) } : {}),
+      ...(children ? { children: parseInt(children) } : {}),
+      ...(infants ? { infants: parseInt(infants) } : {}),
+    };
+
+    const isNotSecondPage =
+      "previous" in searchQueryParams && "next" in searchQueryParams;
+    if (isNotSecondPage) {
       return {
-        first: SEARCH_QUERY_LIMIT,
-        after: searchQueryParams.next,
+        page: { first: SEARCH_QUERY_LIMIT, after: searchQueryParams.next },
+        input: input,
       };
     }
+
+    return {
+      page: { first: SEARCH_QUERY_LIMIT },
+      input: input,
+    };
   }
 
   return {
-    first: SEARCH_QUERY_LIMIT,
+    page: { first: SEARCH_QUERY_LIMIT },
+    input: { location: "Explore Nearby Destinations" },
   };
 };
 
@@ -57,27 +80,34 @@ export const useGetSearchHomesParam = (): [
   (hasPreviousPage: boolean, endCursor: string) => void
 ] => {
   const { search, pathname } = useLocation<SearchListingsQueryParams>();
-
-  const searchParams = new URLSearchParams(search);
-  const searchQueryParams = queryString.parse(search);
-
   const history = useHistory();
+
+  const searchQueryParams = queryString.parse(search);
+  const decodedDestinationFromParam = pathname
+    .split("/")[2]
+    .replaceAll("_", ", ")
+    .replaceAll("-", " ");
 
   const [
     searchListingsQueryParams,
     setSearchListingsQueryParams,
   ] = useState<GetListingsQueryVariables>(
-    getGetListingsQueryParams(searchQueryParams)
+    getGetListingsQueryParams({
+      ...searchQueryParams,
+      location: decodedDestinationFromParam,
+    })
   );
 
   const previousCursors = useRef<(string | null)[]>([]);
   const holderCursor = useRef<string>("");
 
   if (isSearchListingsQueryParams(searchQueryParams)) {
-    previousCursors.current = searchQueryParams.previous
+    previousCursors.current = (searchQueryParams.previous ?? "")
       .split(",")
       .map((val) => (val === "" ? null : val));
   }
+
+  const searchParams = new URLSearchParams(search);
 
   const onPreviousClicked = () => {
     const previousCursor = previousCursors.current.pop();
@@ -92,10 +122,16 @@ export const useGetSearchHomesParam = (): [
       search: searchParams.toString(),
     });
 
-    setSearchListingsQueryParams({
-      first: SEARCH_QUERY_LIMIT,
-      after: previousCursor,
-    });
+    setSearchListingsQueryParams((state) => ({
+      page: {
+        first: SEARCH_QUERY_LIMIT,
+        after: previousCursor,
+      },
+      input: {
+        ...state.input,
+        location: decodedDestinationFromParam,
+      },
+    }));
 
     window.scrollTo(0, 0);
   };
@@ -118,10 +154,13 @@ export const useGetSearchHomesParam = (): [
       search: searchParams.toString(),
     });
 
-    setSearchListingsQueryParams({
-      first: SEARCH_QUERY_LIMIT,
-      after: endCursor,
-    });
+    setSearchListingsQueryParams((state) => ({
+      ...state,
+      page: {
+        first: SEARCH_QUERY_LIMIT,
+        after: endCursor,
+      },
+    }));
 
     window.scrollTo(0, 0);
   };

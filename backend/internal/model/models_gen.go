@@ -2,6 +2,10 @@
 
 package model
 
+import (
+	"time"
+)
+
 type Connection interface {
 	IsConnection()
 }
@@ -28,6 +32,15 @@ type ListingEdge struct {
 }
 
 func (ListingEdge) IsEdge() {}
+
+type ListingsInput struct {
+	Location string     `json:"location"`
+	CheckIn  *time.Time `json:"checkIn"`
+	CheckOut *time.Time `json:"checkOut"`
+	Adults   *int       `json:"adults"`
+	Children *int       `json:"children"`
+	Infants  *int       `json:"infants"`
+}
 
 type PageInfo struct {
 	StartCursor     string `json:"startCursor"`

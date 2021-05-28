@@ -29,8 +29,8 @@ const GET_LISTINGS = gql`
   ${PAGE_INFO_FIELDS}
   ${LISTING_FIELDS}
 
-  query getListings($first: Int!, $after: String) {
-    listings(page: { first: $first, after: $after }) {
+  query getListings($page: PaginationInput!, $input: ListingsInput!) {
+    listings(page: $page, input: $input) {
       pageInfo {
         ...PageInfoFields
       }

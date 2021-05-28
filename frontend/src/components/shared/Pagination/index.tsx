@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import PreviousIcon from "../../../../../assets/previous-icon.svg";
-import NextIcon from "../../../../../assets/next-icon.svg";
+import PreviousIcon from "../../../assets/next-icon.svg";
+import NextIcon from "../../../assets/next-icon.svg";
 
 const Container = styled.div`
   display: flex;
@@ -38,6 +38,10 @@ const PageButton = styled.button<PageButtonProps>`
     `}
 `;
 
+const Rotated = styled.div`
+  transform: rotate(180deg);
+`;
+
 interface PaginatorProps {
   onPreviousClicked: () => void;
   onNextClicked: () => void;
@@ -54,7 +58,9 @@ const Paginator: React.FC<PaginatorProps> = ({
   return (
     <Container>
       <PageButton onClick={onPreviousClicked} disabled={onPreviousDisabled}>
-        <PreviousIcon />
+        <Rotated>
+          <PreviousIcon />
+        </Rotated>
         Previous
       </PageButton>
       <PageButton onClick={onNextClicked} disabled={onNextDisabled}>

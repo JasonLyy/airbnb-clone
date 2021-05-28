@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Results from "./Results";
 import { useGetListingsQuery } from "./__generated__/queries.generated";
 import { useGetSearchHomesParam } from "./useSearchHomesParams";
-import Pagination from "./Results/Pagination";
+import Pagination from "../../shared/Pagination";
 
 const SearchHomeContainer = styled.div`
   background-color: white;
