@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { GetListingsQueryVariables } from "./__generated__/queries.generated";
 import queryString from "query-string";
+import parseDate from "date-fns/parse";
+import subtractDateMinutes from "date-fns/subMinutes";
+import { GetListingsQueryVariables } from "./__generated__/queries.generated";
 import { ListingsInput } from "../../../types/types.generated";
 
 type SearchListingsQueryParams = { [K in keyof ListingsInput]: string } & {
@@ -20,8 +22,8 @@ const isSearchListingsQueryParams = (search: {
 
   return (
     isValidParam("location", search) &&
-    (isValidParam("checkin", search) ||
-      isValidParam("checkout", search) ||
+    (isValidParam("checkIn", search) ||
+      isValidParam("checkOut", search) ||
       isValidParam("adults", search) ||
       isValidParam("children", search) ||
       isValidParam("infants", search) ||
@@ -44,10 +46,24 @@ const getGetListingsQueryParams = (
       children,
     } = searchQueryParams;
 
+    const timezoneMinuteDifference = new Date().getTimezoneOffset();
+    const checkInDate = checkIn
+      ? subtractDateMinutes(
+          parseDate(checkIn, "dd/MM/yyyy", new Date()),
+          timezoneMinuteDifference
+        ).toISOString()
+      : null;
+    const checkOutDate = checkOut
+      ? subtractDateMinutes(
+          parseDate(checkOut, "dd/MM/yyyy", new Date()),
+          timezoneMinuteDifference
+        ).toISOString()
+      : null;
+
     const input = {
       location,
-      checkIn,
-      checkOut,
+      ...(checkInDate ? { checkIn: checkInDate } : {}),
+      ...(checkOutDate ? { checkOut: checkOutDate } : {}),
       ...(adults ? { adults: parseInt(adults) } : {}),
       ...(children ? { children: parseInt(children) } : {}),
       ...(infants ? { infants: parseInt(infants) } : {}),

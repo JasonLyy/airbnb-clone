@@ -3,6 +3,7 @@
    "version": "0.1.0",
    "private": true,
    "dependencies": {
+      "date-fns": "^2.22.1",
       "graphql": "^15.5.0",
       "graphql-request": "^3.4.0",
       "moment": "^2.29.1",

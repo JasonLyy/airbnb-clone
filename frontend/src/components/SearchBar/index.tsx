@@ -45,8 +45,8 @@ const buildSearchQueryLink = (input: {
 
   const searchParams = new URLSearchParams();
 
-  startDate && searchParams.append("checkin", startDate.format("DD/MM/YYYY"));
-  endDate && searchParams.append("checkout", endDate.format("DD/MM/YYYY"));
+  startDate && searchParams.append("checkIn", startDate.format("DD/MM/YYYY"));
+  endDate && searchParams.append("checkOut", endDate.format("DD/MM/YYYY"));
 
   if (guests) {
     guests.adults !== 0 &&

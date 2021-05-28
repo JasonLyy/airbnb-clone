@@ -5,6 +5,8 @@ package resolver
 
 import (
 	"context"
+	"fmt"
+	"math"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/db"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
@@ -38,8 +40,18 @@ func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput
 		guestsCount += *input.Infants
 	}
 
+	numberOfRequestDayToStay := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
+
+	fmt.Println(numberOfRequestDayToStay)
 	var listings []*model.Listing
-	results := db.Where("accommodates > ?", guestsCount).Where("neighbourhood LIKE ?", input.Location).Find(&listings)
+	results :=
+		db.
+			Where("minimum_nights <= ?", numberOfRequestDayToStay).
+			Where("maximum_nights >= ?", numberOfRequestDayToStay).
+			Where("accommodates > ?", guestsCount).
+			Where("neighbourhood LIKE ?", input.Location).
+			Find(&listings)
+
 	if results.Error != nil {
 		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
 	}
