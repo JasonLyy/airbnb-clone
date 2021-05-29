@@ -14,13 +14,38 @@ import (
 )
 
 func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int, error) {
-	val := 45
-	return &val, nil
+	var reviews []*model.Review
+	var count int64
+
+	results := db.Db.
+		Select("review_id").
+		Where("listing_id = ?", obj.Id).
+		Model(&reviews).
+		Count(&count)
+	if results.Error != nil {
+		return nil, results.Error
+	}
+
+	intCount := int(count)
+	return &intCount, nil
 }
 
 func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*float64, error) {
-	val := 4.68
-	return &val, nil
+	var reviews []*model.Review
+	var averageRating float64
+
+	err := db.Db.
+		Select("avg(rating) as averageRating").
+		Where("listing_id = ?", obj.Id).
+		Find(&reviews).
+		Row().
+		Scan(&averageRating)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &averageRating, nil
 }
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {

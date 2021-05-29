@@ -5,6 +5,8 @@ import ListingCard from "./ListingCard";
 import HorizontalDivider from "./ListingCard/HorizontalDivider";
 
 const ResultsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   background-color: white;
   flex: 1 1;
   max-width: 920px;
@@ -25,6 +27,10 @@ const Subheading = styled.div`
   font-size: 22px;
   font-weight: 500;
   color: ${(p) => p.theme.colors.primaryComponent};
+`;
+
+const Footer = styled.div`
+  margin-top: auto;
 `;
 
 interface ResultsProps {
@@ -66,7 +72,6 @@ const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
           ratings={rating ?? -1}
           pictureUrl={pictureUrl ?? ""}
         />
-        <HorizontalDivider />
       </>
     );
   });
@@ -81,7 +86,10 @@ const Results: React.FC<ResultsProps> = ({
       <Heading>Places to stay near you</Heading>
       <Subheading>Explore all {totalResults} stays</Subheading>
       {createListingCards(listings)}
-      {children}
+      <Footer>
+        <HorizontalDivider />
+        {children}
+      </Footer>
     </ResultsContainer>
   );
 };

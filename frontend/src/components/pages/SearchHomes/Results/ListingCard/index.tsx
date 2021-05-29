@@ -174,8 +174,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <BottomContainer>
           <Review>
             <ReviewStar as={Star} />
-            <Rating>${ratings}</Rating>
-            <ReviewCount>(${reviews} reviews)</ReviewCount>
+            <Rating>{ratings.toFixed(2)}</Rating>
+            <ReviewCount>({reviews} reviews)</ReviewCount>
           </Review>
           <PricingContainer>
             <PricingText>{currencyFormat(price * nights)} AUD</PricingText>
