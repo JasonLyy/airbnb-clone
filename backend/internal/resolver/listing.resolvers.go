@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"math"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/db"
@@ -35,7 +34,7 @@ func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*floa
 	var averageRating float64
 
 	err := db.Db.
-		Select("avg(rating) as averageRating").
+		Select("coalesce(avg(rating), ?) as averageRating", 0).
 		Where("listing_id = ?", obj.Id).
 		Find(&reviews).
 		Row().
@@ -67,7 +66,6 @@ func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput
 
 	numberOfRequestDayToStay := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
 
-	fmt.Println(numberOfRequestDayToStay)
 	var listings []*model.Listing
 	results :=
 		db.
