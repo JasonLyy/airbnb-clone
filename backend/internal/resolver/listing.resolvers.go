@@ -7,82 +7,90 @@ import (
 	"context"
 	"math"
 
-	"github.com/JasonLyy/airbnb-clone/backend/internal/db"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
 )
 
 func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int, error) {
-	var reviews []*model.Review
-	var count int64
+	repo := repository.NewReviewRepository(r.db)
 
-	results := db.Db.
-		Select("review_id").
-		Where("listing_id = ?", obj.Id).
-		Model(&reviews).
-		Count(&count)
-	if results.Error != nil {
-		return nil, results.Error
+	reviews, e := repo.ListingTotalReviews(obj.Id)
+	if e != nil {
+		return nil, e
 	}
 
-	intCount := int(count)
-	return &intCount, nil
+	v := int(reviews)
+	return &v, nil
 }
 
 func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*float64, error) {
-	var reviews []*model.Review
-	var averageRating float64
+	repo := repository.NewReviewRepository(r.db)
 
-	err := db.Db.
-		Select("coalesce(avg(rating), ?) as averageRating", 0).
-		Where("listing_id = ?", obj.Id).
-		Find(&reviews).
-		Row().
-		Scan(&averageRating)
-
-	if err != nil {
-		return nil, err
+	rating, e := repo.ListingRating(obj.Id)
+	if e != nil {
+		return nil, e
 	}
 
-	return &averageRating, nil
+	return &rating, nil
 }
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
-	db, err := paginatedDb(db.Db, "listing_id", page)
-	if err != nil {
-		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
-	}
-
-	var guestsCount int
+	var guests int
 	if input.Adults != nil {
-		guestsCount += *input.Adults
+		guests += *input.Adults
 	}
 	if input.Children != nil {
-		guestsCount += *input.Children
+		guests += *input.Children
 	}
 	if input.Infants != nil {
-		guestsCount += *input.Infants
+		guests += *input.Infants
 	}
 
-	numberOfRequestDayToStay := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
+	nights := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
 
-	var listings []*model.Listing
-	results :=
-		db.
-			Where("minimum_nights <= ?", numberOfRequestDayToStay).
-			Where("maximum_nights >= ?", numberOfRequestDayToStay).
-			Where("accommodates > ?", guestsCount).
-			Where("neighbourhood LIKE ?", input.Location).
-			Find(&listings)
-
-	if results.Error != nil {
-		return &model.ListingConnection{PageInfo: &model.PageInfo{}}, err
+	repo := repository.NewListingRepository(r.db)
+	listings, e := repo.FilteredListings(page, nights, guests, input.Location)
+	if e != nil {
+		return &model.ListingConnection{}, e
 	}
 
-	var count int64
-	results.Count(&count)
+	return listingsToConnection(listings, page, int64(len(listings))), nil
+}
 
-	return listingsToConnection(listings, page, count), nil
+//todo: need to explore how to make this more generic given that in Golang there is no generic :\
+func listingsToConnection(listings []*model.Listing, page model.PaginationInput, count int64) *model.ListingConnection {
+	if len(listings) == 0 {
+		return &model.ListingConnection{PageInfo: &model.PageInfo{}}
+	}
+
+	pageInfo := model.PageInfo{}
+	if page.First != nil {
+		if len(listings) >= *page.First+1 {
+			pageInfo.HasNextPage = true
+			listings = listings[:len(listings)-1]
+		}
+	}
+
+	listingEdges := make([]*model.ListingEdge, len(listings))
+	for i, listing := range listings {
+		cursor := encodeCursor(listing.Id)
+
+		listingEdges[i] = &model.ListingEdge{
+			Cursor: cursor,
+			Node:   listing,
+		}
+	}
+
+	// todo: need to check if this logic is correct
+	if page.After != nil {
+		pageInfo.HasPreviousPage = true
+	}
+
+	pageInfo.StartCursor = listingEdges[0].Cursor
+	pageInfo.EndCursor = listingEdges[len(listingEdges)-1].Cursor
+
+	return &model.ListingConnection{PageInfo: &pageInfo, Edges: listingEdges, TotalResults: int(count)}
 }
 
 // Listing returns generated.ListingResolver implementation.

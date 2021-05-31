@@ -9,9 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-var Db *gorm.DB
+type DB struct {
+	DB *gorm.DB
+}
 
-type DbConfig struct {
+type dbConfig struct {
 	host     string
 	user     string
 	password string
@@ -20,13 +22,13 @@ type DbConfig struct {
 	timeZone string
 }
 
-func loadDbVariables() (*DbConfig, error) {
+func loadDbVariables() (*dbConfig, error) {
 	err := godotenv.Load(".env.dev")
 	if err != nil {
 		return nil, err
 	}
 
-	return &DbConfig{
+	return &dbConfig{
 		host:     os.Getenv("DB_HOST"),
 		user:     os.Getenv("DB_USER"),
 		password: os.Getenv("DB_PASSWORD"),
@@ -36,7 +38,7 @@ func loadDbVariables() (*DbConfig, error) {
 	}, nil
 }
 
-func Init() {
+func Init() *DB {
 	vars, err := loadDbVariables()
 	if err != nil {
 		panic("Failure to get database environment variables.")
@@ -55,5 +57,5 @@ func Init() {
 		panic("Failed to connect to database!")
 	}
 
-	Db = db
+	return &DB{DB: db}
 }

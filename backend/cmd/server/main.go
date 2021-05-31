@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	db.Init()
+	db := db.Init()
 
-	router := router.Init(db.Db)
+	router := router.Init(db.DB)
 
 	router.Logger.Fatal(router.Start(":8001"))
 }
