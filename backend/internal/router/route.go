@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/JasonLyy/airbnb-clone/backend/internal/api"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/controllers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
@@ -14,8 +14,8 @@ func Init(db *gorm.DB) *echo.Echo {
 	// e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.Any("/graphql", api.GraphQl(db))
-	e.GET("/graphql/playground", api.GraphQlPlayground(db))
+	e.Any("/graphql", controllers.GraphQl(db))
+	e.GET("/graphql/playground", controllers.GraphQlPlayground(db))
 
 	return e
 }

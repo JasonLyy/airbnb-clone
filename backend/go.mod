@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.10.1
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1 // indirect
 	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
 	gorm.io/driver/postgres v1.0.8

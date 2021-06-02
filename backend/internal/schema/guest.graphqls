@@ -1,0 +1,18 @@
+type Guest {
+  id: ID!
+  email: String!
+}
+
+type AuthPayload {
+  user: Guest!
+  token: String!
+}
+
+input CreateGuestInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createGuest(input: CreateGuestInput!): AuthPayload
+}

@@ -26,6 +26,7 @@ type Listing struct {
 	MinimumNights         int64          `json:"minimum_nights"`
 	MaximumNights         int64          `json:"maximum_nights"`
 	HostId                string         `json:"host"`
+	Reviews               []Review
 }
 
 // required for gqlgen to generate.

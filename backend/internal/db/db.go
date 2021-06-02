@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -52,9 +53,16 @@ func Init() *DB {
 		vars.port,
 		vars.timeZone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
 	if err != nil {
 		panic("Failed to connect to database!")
+	}
+
+	// todo: migrate (hah) the other models which are done via SQL.
+	err = db.AutoMigrate(&model.Guest{})
+
+	fmt.Println(err)
+	if err != nil {
+		panic("Failed to complete migrations")
 	}
 
 	return &DB{DB: db}

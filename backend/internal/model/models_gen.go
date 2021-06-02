@@ -18,6 +18,16 @@ type Node interface {
 	IsNode()
 }
 
+type AuthPayload struct {
+	User  *Guest `json:"user"`
+	Token string `json:"token"`
+}
+
+type CreateGuestInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type ListingConnection struct {
 	PageInfo     *PageInfo      `json:"pageInfo"`
 	Edges        []*ListingEdge `json:"edges"`
