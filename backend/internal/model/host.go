@@ -14,14 +14,14 @@ type Host struct {
 	DeletedAt        gorm.DeletedAt `gorm:"index"`
 	Url              string
 	FirstName        string
-	Since            *time.Time
+	Since            time.Time
 	Location         string
 	About            string
 	IsSuperhost      string
 	ThumbnailUrl     string
 	PictureUrl       string
 	Neighbourhood    string
-	Verifications    []pq.StringArray
+	Verifications    pq.StringArray `gorm:"type:varchar[]"`
 	IdentityVerified bool
 	Listings         []Listing
 }

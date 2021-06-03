@@ -39,6 +39,27 @@ func loadDbVariables() (*dbConfig, error) {
 	}, nil
 }
 
+func migrate(db *gorm.DB) error {
+	err := db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.AutoMigrate(&model.Guest{}); err != nil {
+			return err
+		}
+		if err := tx.AutoMigrate(&model.Review{}); err != nil {
+			return err
+		}
+		if err := tx.AutoMigrate(&model.Host{}); err != nil {
+			return err
+		}
+		if err := tx.AutoMigrate(&model.Listing{}); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
+
 func Init() *DB {
 	vars, err := loadDbVariables()
 	if err != nil {
@@ -57,12 +78,9 @@ func Init() *DB {
 		panic("Failed to connect to database!")
 	}
 
-	// todo: migrate (hah) the other models which are done via SQL.
-	err = db.AutoMigrate(&model.Guest{})
-
-	fmt.Println(err)
+	err = migrate(db)
 	if err != nil {
-		panic("Failed to complete migrations")
+		panic("Failed to migrate")
 	}
 
 	return &DB{DB: db}

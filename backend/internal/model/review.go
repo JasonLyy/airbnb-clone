@@ -14,6 +14,8 @@ type Review struct {
 	ReviewDate string
 	Comment    string
 	Rating     int64
+	GuestID    int64
+	ListingID  int64
 }
 
 // required for gqlgen to generate.

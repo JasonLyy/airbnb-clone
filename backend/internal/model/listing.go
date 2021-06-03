@@ -27,11 +27,12 @@ type Listing struct {
 	BathroomsText         string
 	Bedrooms              int64
 	Beds                  int64
-	Amenities             pq.StringArray
+	Amenities             pq.StringArray `gorm:"type:varchar[]"`
 	Price                 float64
 	MinimumNights         int64
 	MaximumNights         int64
 	Reviews               []Review
+	HostID                int64
 }
 
 // required for gqlgen to generate.

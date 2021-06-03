@@ -1,4 +1,4 @@
-package migrations
+package fixtures
 
 import (
 	"context"
@@ -82,11 +82,9 @@ func migrateCSV(reader io.Reader, table string, columns []string) (int64, error)
 	// update index to be max of imported data. PK MUST be singular of table name and id (i.e. if table is guests, PK is guest_id)
 	_, err = tx.Exec(
 		context.Background(),
-		fmt.Sprintf("SELECT setval('%ss_%s_id_seq', COALESCE((SELECT MAX(%s_id)+1 FROM %ss), 1), false)",
-			table[:len(table)-1],
-			table[:len(table)-1],
-			table[:len(table)-1],
-			table[:len(table)-1],
+		fmt.Sprintf("SELECT setval('%s_id_seq', COALESCE((SELECT MAX(id)+1 FROM %s), 1), false)",
+			table,
+			table,
 		))
 	if err != nil {
 		return -1, err

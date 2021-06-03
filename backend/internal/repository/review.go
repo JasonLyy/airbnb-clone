@@ -42,7 +42,7 @@ func (r reviewRepository) ListingTotalReviews(id int64) (int64, error) {
 
 	var count int64
 	result := r.DB.
-		Select("review_id").
+		Select("id").
 		Where("listing_id = ?", id).
 		Model(&reviews).
 		Count(&count)

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/JasonLyy/airbnb-clone/backend/internal/migrations"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/fixtures"
 )
 
 func main() {
@@ -15,13 +15,13 @@ func main() {
 	}
 
 	// look into reflections to get key of structs of defined models
-	m := migrations.Migrations{
-		Migrations: []migrations.Migration{
+	m := fixtures.Migrations{
+		Migrations: []fixtures.Migration{
 			{
 				TableName: "guests",
 				Dir:       path.Join(cwd, "db/fixtures/guests.csv"),
 				Columns: []string{
-					"guest_id",
+					"id",
 					"first_name",
 				},
 			},
@@ -29,7 +29,7 @@ func main() {
 				TableName: "hosts",
 				Dir:       path.Join(cwd, "db/fixtures/hosts.csv"),
 				Columns: []string{
-					"host_id",
+					"id",
 					"url",
 					"first_name",
 					"since",
@@ -47,7 +47,7 @@ func main() {
 				TableName: "listings",
 				Dir:       path.Join(cwd, "db/fixtures/listings.csv"),
 				Columns: []string{
-					"listing_id",
+					"id",
 					"name",
 					"description",
 					"neighbourhood_overview",
@@ -74,7 +74,7 @@ func main() {
 				TableName: "reviews",
 				Dir:       path.Join(cwd, "db/fixtures/reviews_1.csv"),
 				Columns: []string{
-					"review_id",
+					"id",
 					"review_date",
 					"comment",
 					"rating",
@@ -86,7 +86,7 @@ func main() {
 				TableName: "reviews",
 				Dir:       path.Join(cwd, "db/fixtures/reviews_2.csv"),
 				Columns: []string{
-					"review_id",
+					"id",
 					"review_date",
 					"comment",
 					"rating",

@@ -23,7 +23,7 @@ func NewListingRepository(db *gorm.DB) listingRepository {
 func (l listingRepository) FilteredListings(page model.PaginationInput, nights int, guests int, location string) ([]*model.Listing, error) {
 	var listings []*model.Listing
 
-	db, err := paginatedDb(l.DB, "listing_id", page)
+	db, err := paginatedDb(l.DB, "id", page)
 	if err != nil {
 		return []*model.Listing{}, err
 	}
