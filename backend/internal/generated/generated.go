@@ -55,7 +55,7 @@ type ComplexityRoot struct {
 
 	Guest struct {
 		Email func(childComplexity int) int
-		Id    func(childComplexity int) int
+		ID    func(childComplexity int) int
 	}
 
 	Listing struct {
@@ -66,8 +66,7 @@ type ComplexityRoot struct {
 		Bedrooms              func(childComplexity int) int
 		Beds                  func(childComplexity int) int
 		Description           func(childComplexity int) int
-		HostId                func(childComplexity int) int
-		Id                    func(childComplexity int) int
+		ID                    func(childComplexity int) int
 		Latitude              func(childComplexity int) int
 		Longitude             func(childComplexity int) int
 		MaximumNights         func(childComplexity int) int
@@ -159,11 +158,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Guest.Email(childComplexity), true
 
 	case "Guest.id":
-		if e.complexity.Guest.Id == nil {
+		if e.complexity.Guest.ID == nil {
 			break
 		}
 
-		return e.complexity.Guest.Id(childComplexity), true
+		return e.complexity.Guest.ID(childComplexity), true
 
 	case "Listing.accommodates":
 		if e.complexity.Listing.Accommodates == nil {
@@ -214,19 +213,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Listing.Description(childComplexity), true
 
-	case "Listing.hostId":
-		if e.complexity.Listing.HostId == nil {
-			break
-		}
-
-		return e.complexity.Listing.HostId(childComplexity), true
-
 	case "Listing.id":
-		if e.complexity.Listing.Id == nil {
+		if e.complexity.Listing.ID == nil {
 			break
 		}
 
-		return e.complexity.Listing.Id(childComplexity), true
+		return e.complexity.Listing.ID(childComplexity), true
 
 	case "Listing.latitude":
 		if e.complexity.Listing.Latitude == nil {
@@ -517,7 +509,6 @@ type Mutation {
   price: Float
   minimumNights: Int
   maximumNights: Int
-  hostId: String
   reviews: Int
   rating: Float
 }
@@ -762,7 +753,7 @@ func (ec *executionContext) _Guest_id(ctx context.Context, field graphql.Collect
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Id, nil
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -832,7 +823,7 @@ func (ec *executionContext) _Listing_id(ctx context.Context, field graphql.Colle
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Id, nil
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1461,38 +1452,6 @@ func (ec *executionContext) _Listing_maximumNights(ctx context.Context, field gr
 	res := resTmp.(int64)
 	fc.Result = res
 	return ec.marshalOInt2int64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Listing_hostId(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Listing",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HostId, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Listing_reviews(ctx context.Context, field graphql.CollectedField, obj *model.Listing) (ret graphql.Marshaler) {
@@ -3409,8 +3368,6 @@ func (ec *executionContext) _Listing(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Listing_minimumNights(ctx, field, obj)
 		case "maximumNights":
 			out.Values[i] = ec._Listing_maximumNights(ctx, field, obj)
-		case "hostId":
-			out.Values[i] = ec._Listing_hostId(ctx, field, obj)
 		case "reviews":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

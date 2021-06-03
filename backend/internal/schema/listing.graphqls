@@ -19,7 +19,6 @@ type Listing implements Node {
   price: Float
   minimumNights: Int
   maximumNights: Int
-  hostId: String
   reviews: Int
   rating: Float
 }

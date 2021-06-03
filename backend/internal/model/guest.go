@@ -8,19 +8,18 @@ import (
 )
 
 type Guest struct {
-	Id        int64     `gorm:"primaryKey;column:guest_id;auto_increment" json:"guest_id"`
-	Email     string    `gorm:"unique" json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID        int64 `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+	FirstName string
+	Email     string `gorm:"unique"`
+	Password  string
+	Reviews   []Review
 }
 
 // required for gqlgen to generate.
 func (Guest) IsNode() {}
-
-func (*Guest) TableName() string {
-	return "guests"
-}
 
 func Hash(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

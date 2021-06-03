@@ -15,7 +15,7 @@ import (
 func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int, error) {
 	repo := repository.NewReviewRepository(r.db)
 
-	reviews, e := repo.ListingTotalReviews(obj.Id)
+	reviews, e := repo.ListingTotalReviews(obj.ID)
 	if e != nil {
 		return nil, e
 	}
@@ -27,7 +27,7 @@ func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int
 func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*float64, error) {
 	repo := repository.NewReviewRepository(r.db)
 
-	rating, e := repo.ListingRating(obj.Id)
+	rating, e := repo.ListingRating(obj.ID)
 	if e != nil {
 		return nil, e
 	}
@@ -66,43 +66,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type listingResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func listingsToConnection(listings []*model.Listing, page model.PaginationInput, count int64) *model.ListingConnection {
-	if len(listings) == 0 {
-		return &model.ListingConnection{PageInfo: &model.PageInfo{}}
-	}
-
-	pageInfo := model.PageInfo{}
-	if page.First != nil {
-		if len(listings) >= *page.First+1 {
-			pageInfo.HasNextPage = true
-			listings = listings[:len(listings)-1]
-		}
-	}
-
-	listingEdges := make([]*model.ListingEdge, len(listings))
-	for i, listing := range listings {
-		cursor := encodeCursor(listing.Id)
-
-		listingEdges[i] = &model.ListingEdge{
-			Cursor: cursor,
-			Node:   listing,
-		}
-	}
-
-	// todo: need to check if this logic is correct
-	if page.After != nil {
-		pageInfo.HasPreviousPage = true
-	}
-
-	pageInfo.StartCursor = listingEdges[0].Cursor
-	pageInfo.EndCursor = listingEdges[len(listingEdges)-1].Cursor
-
-	return &model.ListingConnection{PageInfo: &pageInfo, Edges: listingEdges, TotalResults: int(count)}
-}
