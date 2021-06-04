@@ -30,6 +30,10 @@ func VerifyPassword(hashedPw string, pw string) error {
 }
 
 func (u *Guest) BeforeSave(tx *gorm.DB) (err error) {
+	if len(u.Email) == 0 || len(u.Password) == 0 {
+		return err
+	}
+
 	password, err := Hash(u.Password)
 	if err != nil {
 		return err
