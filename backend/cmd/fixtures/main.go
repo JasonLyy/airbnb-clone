@@ -19,7 +19,7 @@ func main() {
 		Migrations: []fixtures.Migration{
 			{
 				TableName: "guests",
-				Dir:       path.Join(cwd, "db/fixtures/guests.csv"),
+				Dir:       path.Join(cwd, "internal/fixtures/guests.csv"),
 				Columns: []string{
 					"id",
 					"first_name",
@@ -27,7 +27,7 @@ func main() {
 			},
 			{
 				TableName: "hosts",
-				Dir:       path.Join(cwd, "db/fixtures/hosts.csv"),
+				Dir:       path.Join(cwd, "internal/fixtures/hosts.csv"),
 				Columns: []string{
 					"id",
 					"url",
@@ -45,7 +45,7 @@ func main() {
 			},
 			{
 				TableName: "listings",
-				Dir:       path.Join(cwd, "db/fixtures/listings.csv"),
+				Dir:       path.Join(cwd, "internal/fixtures/listings.csv"),
 				Columns: []string{
 					"id",
 					"name",
@@ -72,7 +72,7 @@ func main() {
 			},
 			{
 				TableName: "reviews",
-				Dir:       path.Join(cwd, "db/fixtures/reviews_1.csv"),
+				Dir:       path.Join(cwd, "internal/fixtures/reviews_1.csv"),
 				Columns: []string{
 					"id",
 					"review_date",
@@ -84,7 +84,7 @@ func main() {
 			},
 			{
 				TableName: "reviews",
-				Dir:       path.Join(cwd, "db/fixtures/reviews_2.csv"),
+				Dir:       path.Join(cwd, "internal/fixtures/reviews_2.csv"),
 				Columns: []string{
 					"id",
 					"review_date",

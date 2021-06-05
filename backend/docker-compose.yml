@@ -5,7 +5,6 @@ services:
     image: postgres:latest
     container_name: airbnb-clone-server-db
     volumes:
-      - "${PWD}/db/fixtures:/docker-entrypoint-initdb.d"
       - "${PWD}/db/volume:/var/lib/postgresql/data"
     ports:
       - 5432:5432
