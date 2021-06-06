@@ -6,9 +6,10 @@ import (
 )
 
 func main() {
-	db := db.Init()
+	database := db.Init()
+	redis := db.InitRedis()
 
-	router := router.Init(db.DB)
+	router := router.Init(database.DB, redis)
 
 	router.Logger.Fatal(router.Start(":8001"))
 }

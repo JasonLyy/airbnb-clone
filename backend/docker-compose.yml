@@ -29,3 +29,12 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 3
+  redis:
+    image: redis:alpine
+    container_name: airbnb-clone-server-redis
+    ports: 
+        - 6379:6379
+    volumes:
+      - ./db/redis/redis.conf:/redis.conf
+    command: ["redis-server", "/redis.conf"]
+          
