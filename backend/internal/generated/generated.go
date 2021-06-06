@@ -49,8 +49,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AuthPayload struct {
-		Token func(childComplexity int) int
-		User  func(childComplexity int) int
+		AccessToken  func(childComplexity int) int
+		RefreshToken func(childComplexity int) int
 	}
 
 	Guest struct {
@@ -94,8 +94,15 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	LogoutPayload struct {
+		Success func(childComplexity int) int
+	}
+
 	Mutation struct {
-		CreateGuest func(childComplexity int, input model.CreateGuestInput) int
+		CreateGuest  func(childComplexity int, input model.CredentialsInput) int
+		LoginGuest   func(childComplexity int, input model.CredentialsInput) int
+		LogoutGuest  func(childComplexity int, accessToken string) int
+		RefreshToken func(childComplexity int, resfreshToken *string) int
 	}
 
 	PageInfo struct {
@@ -115,7 +122,10 @@ type ListingResolver interface {
 	Rating(ctx context.Context, obj *model.Listing) (*float64, error)
 }
 type MutationResolver interface {
-	CreateGuest(ctx context.Context, input model.CreateGuestInput) (*model.AuthPayload, error)
+	CreateGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
+	LoginGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
+	LogoutGuest(ctx context.Context, accessToken string) (*model.LogoutPayload, error)
+	RefreshToken(ctx context.Context, resfreshToken *string) (*model.AuthPayload, error)
 }
 type QueryResolver interface {
 	Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
@@ -136,19 +146,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "AuthPayload.token":
-		if e.complexity.AuthPayload.Token == nil {
+	case "AuthPayload.accessToken":
+		if e.complexity.AuthPayload.AccessToken == nil {
 			break
 		}
 
-		return e.complexity.AuthPayload.Token(childComplexity), true
+		return e.complexity.AuthPayload.AccessToken(childComplexity), true
 
-	case "AuthPayload.user":
-		if e.complexity.AuthPayload.User == nil {
+	case "AuthPayload.refreshToken":
+		if e.complexity.AuthPayload.RefreshToken == nil {
 			break
 		}
 
-		return e.complexity.AuthPayload.User(childComplexity), true
+		return e.complexity.AuthPayload.RefreshToken(childComplexity), true
 
 	case "Guest.email":
 		if e.complexity.Guest.Email == nil {
@@ -353,6 +363,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListingEdge.Node(childComplexity), true
 
+	case "LogoutPayload.success":
+		if e.complexity.LogoutPayload.Success == nil {
+			break
+		}
+
+		return e.complexity.LogoutPayload.Success(childComplexity), true
+
 	case "Mutation.createGuest":
 		if e.complexity.Mutation.CreateGuest == nil {
 			break
@@ -363,7 +380,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateGuest(childComplexity, args["input"].(model.CreateGuestInput)), true
+		return e.complexity.Mutation.CreateGuest(childComplexity, args["input"].(model.CredentialsInput)), true
+
+	case "Mutation.loginGuest":
+		if e.complexity.Mutation.LoginGuest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_loginGuest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LoginGuest(childComplexity, args["input"].(model.CredentialsInput)), true
+
+	case "Mutation.logoutGuest":
+		if e.complexity.Mutation.LogoutGuest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_logoutGuest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LogoutGuest(childComplexity, args["accessToken"].(string)), true
+
+	case "Mutation.refreshToken":
+		if e.complexity.Mutation.RefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_refreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RefreshToken(childComplexity, args["resfreshToken"].(*string)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -475,17 +528,24 @@ var sources = []*ast.Source{
 }
 
 type AuthPayload {
-  user: Guest!
-  token: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
-input CreateGuestInput {
+type LogoutPayload {
+  success: Boolean!
+}
+
+input CredentialsInput {
   email: String!
   password: String!
 }
 
 type Mutation {
-  createGuest(input: CreateGuestInput!): AuthPayload
+  createGuest(input: CredentialsInput!): AuthPayload!
+  loginGuest(input: CredentialsInput!): AuthPayload!
+  logoutGuest(accessToken: String!): LogoutPayload!
+  refreshToken(resfreshToken: String): AuthPayload!
 }
 `, BuiltIn: false},
 	{Name: "internal/schema/listing.graphqls", Input: `type Listing implements Node {
@@ -576,15 +636,60 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createGuest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateGuestInput
+	var arg0 model.CredentialsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateGuestInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐCreateGuestInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCredentialsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐCredentialsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_loginGuest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CredentialsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCredentialsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐCredentialsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_logoutGuest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accessToken"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accessToken"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accessToken"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["resfreshToken"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resfreshToken"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["resfreshToken"] = arg0
 	return args, nil
 }
 
@@ -665,7 +770,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _AuthPayload_user(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _AuthPayload_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -683,7 +788,7 @@ func (ec *executionContext) _AuthPayload_user(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
+		return obj.AccessToken, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -695,12 +800,12 @@ func (ec *executionContext) _AuthPayload_user(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Guest)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNGuest2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐGuest(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AuthPayload_token(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _AuthPayload_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -718,7 +823,7 @@ func (ec *executionContext) _AuthPayload_token(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
+		return obj.RefreshToken, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1693,6 +1798,41 @@ func (ec *executionContext) _ListingEdge_node(ctx context.Context, field graphql
 	return ec.marshalNListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListing(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _LogoutPayload_success(ctx context.Context, field graphql.CollectedField, obj *model.LogoutPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LogoutPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Success, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createGuest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1718,18 +1858,147 @@ func (ec *executionContext) _Mutation_createGuest(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateGuest(rctx, args["input"].(model.CreateGuestInput))
+		return ec.resolvers.Mutation().CreateGuest(rctx, args["input"].(model.CredentialsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.AuthPayload)
 	fc.Result = res
-	return ec.marshalOAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx, field.Selections, res)
+	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_loginGuest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_loginGuest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LoginGuest(rctx, args["input"].(model.CredentialsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthPayload)
+	fc.Result = res
+	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_logoutGuest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_logoutGuest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LogoutGuest(rctx, args["accessToken"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LogoutPayload)
+	fc.Result = res
+	return ec.marshalNLogoutPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐLogoutPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_refreshToken_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RefreshToken(rctx, args["resfreshToken"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthPayload)
+	fc.Result = res
+	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
@@ -3072,8 +3341,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateGuestInput(ctx context.Context, obj interface{}) (model.CreateGuestInput, error) {
-	var it model.CreateGuestInput
+func (ec *executionContext) unmarshalInputCredentialsInput(ctx context.Context, obj interface{}) (model.CredentialsInput, error) {
+	var it model.CredentialsInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -3255,13 +3524,13 @@ func (ec *executionContext) _AuthPayload(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AuthPayload")
-		case "user":
-			out.Values[i] = ec._AuthPayload_user(ctx, field, obj)
+		case "accessToken":
+			out.Values[i] = ec._AuthPayload_accessToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "token":
-			out.Values[i] = ec._AuthPayload_token(ctx, field, obj)
+		case "refreshToken":
+			out.Values[i] = ec._AuthPayload_refreshToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3470,6 +3739,33 @@ func (ec *executionContext) _ListingEdge(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var logoutPayloadImplementors = []string{"LogoutPayload"}
+
+func (ec *executionContext) _LogoutPayload(ctx context.Context, sel ast.SelectionSet, obj *model.LogoutPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, logoutPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LogoutPayload")
+		case "success":
+			out.Values[i] = ec._LogoutPayload_success(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -3487,6 +3783,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createGuest":
 			out.Values[i] = ec._Mutation_createGuest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "loginGuest":
+			out.Values[i] = ec._Mutation_loginGuest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "logoutGuest":
+			out.Values[i] = ec._Mutation_logoutGuest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshToken":
+			out.Values[i] = ec._Mutation_refreshToken(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3829,6 +4143,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAuthPayload2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v model.AuthPayload) graphql.Marshaler {
+	return ec._AuthPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v *model.AuthPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AuthPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3844,19 +4172,9 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateGuestInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐCreateGuestInput(ctx context.Context, v interface{}) (model.CreateGuestInput, error) {
-	res, err := ec.unmarshalInputCreateGuestInput(ctx, v)
+func (ec *executionContext) unmarshalNCredentialsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐCredentialsInput(ctx context.Context, v interface{}) (model.CredentialsInput, error) {
+	res, err := ec.unmarshalInputCredentialsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNGuest2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐGuest(ctx context.Context, sel ast.SelectionSet, v *model.Guest) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Guest(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2int64(ctx context.Context, v interface{}) (int64, error) {
@@ -3963,6 +4281,20 @@ func (ec *executionContext) marshalNListingEdge2ᚖgithubᚗcomᚋJasonLyyᚋair
 func (ec *executionContext) unmarshalNListingsInput2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListingsInput(ctx context.Context, v interface{}) (model.ListingsInput, error) {
 	res, err := ec.unmarshalInputListingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLogoutPayload2githubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐLogoutPayload(ctx context.Context, sel ast.SelectionSet, v model.LogoutPayload) graphql.Marshaler {
+	return ec._LogoutPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLogoutPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐLogoutPayload(ctx context.Context, sel ast.SelectionSet, v *model.LogoutPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._LogoutPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.PageInfo) graphql.Marshaler {
@@ -4243,13 +4575,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalOAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v *model.AuthPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AuthPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

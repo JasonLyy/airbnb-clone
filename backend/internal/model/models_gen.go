@@ -19,11 +19,11 @@ type Node interface {
 }
 
 type AuthPayload struct {
-	User  *Guest `json:"user"`
-	Token string `json:"token"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
 
-type CreateGuestInput struct {
+type CredentialsInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -50,6 +50,10 @@ type ListingsInput struct {
 	Adults   *int       `json:"adults"`
 	Children *int       `json:"children"`
 	Infants  *int       `json:"infants"`
+}
+
+type LogoutPayload struct {
+	Success bool `json:"success"`
 }
 
 type PageInfo struct {

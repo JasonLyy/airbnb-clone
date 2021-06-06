@@ -4,15 +4,22 @@ type Guest {
 }
 
 type AuthPayload {
-  user: Guest!
-  token: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
-input CreateGuestInput {
+type LogoutPayload {
+  success: Boolean!
+}
+
+input CredentialsInput {
   email: String!
   password: String!
 }
 
 type Mutation {
-  createGuest(input: CreateGuestInput!): AuthPayload
+  createGuest(input: CredentialsInput!): AuthPayload!
+  loginGuest(input: CredentialsInput!): AuthPayload!
+  logoutGuest(accessToken: String!): LogoutPayload!
+  refreshToken(resfreshToken: String): AuthPayload!
 }
