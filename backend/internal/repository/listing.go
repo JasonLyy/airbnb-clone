@@ -10,7 +10,7 @@ type listingRepository struct {
 }
 
 type ListingRepository interface {
-	FilteredListings(page model.PaginationInput, nights int, guests int, location string) []*model.Listing
+	FilteredListings(page model.PaginationInput, nights int, guests int, location string) ([]*model.Listing, error)
 }
 
 func NewListingRepository(db *gorm.DB) listingRepository {

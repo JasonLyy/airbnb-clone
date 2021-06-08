@@ -5,57 +5,32 @@ package resolver
 
 import (
 	"context"
-	"math"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
-	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
 )
 
 func (r *listingResolver) Reviews(ctx context.Context, obj *model.Listing) (*int, error) {
-	repo := repository.NewReviewRepository(r.db)
-
-	reviews, e := repo.ListingTotalReviews(obj.ID)
-	if e != nil {
-		return nil, e
+	rv, err := r.listingService.Rating(obj.ID)
+	reviews := int(rv)
+	if err != nil {
+		return &reviews, err
 	}
 
-	v := int(reviews)
-	return &v, nil
+	return &reviews, nil
 }
 
 func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*float64, error) {
-	repo := repository.NewReviewRepository(r.db)
-
-	rating, e := repo.ListingRating(obj.ID)
-	if e != nil {
-		return nil, e
+	rating, err := r.listingService.Rating(obj.ID)
+	if err != nil {
+		return &rating, err
 	}
 
 	return &rating, nil
 }
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
-	var guests int
-	if input.Adults != nil {
-		guests += *input.Adults
-	}
-	if input.Children != nil {
-		guests += *input.Children
-	}
-	if input.Infants != nil {
-		guests += *input.Infants
-	}
-
-	nights := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
-
-	repo := repository.NewListingRepository(r.db)
-	listings, e := repo.FilteredListings(page, nights, guests, input.Location)
-	if e != nil {
-		return &model.ListingConnection{}, e
-	}
-
-	return listingsToConnection(listings, page, int64(len(listings))), nil
+	return r.listingService.ListingConnection(page, input)
 }
 
 // Listing returns generated.ListingResolver implementation.
