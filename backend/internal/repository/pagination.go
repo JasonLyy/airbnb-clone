@@ -11,6 +11,7 @@ import (
 
 const DEFAULT_PAGINATION_LIIMT = 10
 
+// this should not belong here. possibly a centralised helper location..?
 func decodeCursor(cursor string) (id uint64, err error) {
 	bytes, err := base64.StdEncoding.DecodeString(cursor)
 	if err != nil {

@@ -9,11 +9,6 @@ type reviewRepository struct {
 	DB *gorm.DB
 }
 
-type ReviewRepository interface {
-	ListingRating(id int64) (float64, error)
-	ListingTotalReviews(id int64) (int64, error)
-}
-
 func NewReviewRepository(db *gorm.DB) reviewRepository {
 	return reviewRepository{
 		DB: db,

@@ -102,7 +102,7 @@ type ComplexityRoot struct {
 		CreateGuest  func(childComplexity int, input model.CredentialsInput) int
 		LoginGuest   func(childComplexity int, input model.CredentialsInput) int
 		LogoutGuest  func(childComplexity int, accessToken string) int
-		RefreshToken func(childComplexity int, resfreshToken *string) int
+		RefreshToken func(childComplexity int, refreshToken *string) int
 	}
 
 	PageInfo struct {
@@ -125,7 +125,7 @@ type MutationResolver interface {
 	CreateGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
 	LoginGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
 	LogoutGuest(ctx context.Context, accessToken string) (*model.LogoutPayload, error)
-	RefreshToken(ctx context.Context, resfreshToken *string) (*model.AuthPayload, error)
+	RefreshToken(ctx context.Context, refreshToken *string) (*model.AuthPayload, error)
 }
 type QueryResolver interface {
 	Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
@@ -416,7 +416,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RefreshToken(childComplexity, args["resfreshToken"].(*string)), true
+		return e.complexity.Mutation.RefreshToken(childComplexity, args["refreshToken"].(*string)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -545,7 +545,7 @@ type Mutation {
   createGuest(input: CredentialsInput!): AuthPayload!
   loginGuest(input: CredentialsInput!): AuthPayload!
   logoutGuest(accessToken: String!): LogoutPayload!
-  refreshToken(resfreshToken: String): AuthPayload!
+  refreshToken(refreshToken: String): AuthPayload!
 }
 `, BuiltIn: false},
 	{Name: "internal/schema/listing.graphqls", Input: `type Listing implements Node {
@@ -682,14 +682,14 @@ func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["resfreshToken"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resfreshToken"))
+	if tmp, ok := rawArgs["refreshToken"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
 		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["resfreshToken"] = arg0
+	args["refreshToken"] = arg0
 	return args, nil
 }
 
@@ -1984,7 +1984,7 @@ func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RefreshToken(rctx, args["resfreshToken"].(*string))
+		return ec.resolvers.Mutation().RefreshToken(rctx, args["refreshToken"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

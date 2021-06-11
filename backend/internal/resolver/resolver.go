@@ -11,18 +11,14 @@ import (
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-func New(db *gorm.DB, rd *redis.Client, gs guest.GuestInterface, ls listing.ListingInterface) *Resolver {
+func New(db *gorm.DB, rd *redis.Client, gs guest.GuestService, ls listing.ListingService) *Resolver {
 	return &Resolver{
-		db:             db,
-		rd:             rd,
 		guestService:   gs,
 		listingService: ls,
 	}
 }
 
 type Resolver struct {
-	db             *gorm.DB
-	rd             *redis.Client
-	guestService   guest.GuestInterface
-	listingService listing.ListingInterface
+	guestService   guest.GuestService
+	listingService listing.ListingService
 }

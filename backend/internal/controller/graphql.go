@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GraphQl(db *gorm.DB, rd *redis.Client, gs guest.GuestInterface, ls listing.ListingInterface) echo.HandlerFunc {
+func GraphQl(db *gorm.DB, rd *redis.Client, gs guest.GuestService, ls listing.ListingService) echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		config := generated.Config{
 			Resolvers: resolver.New(db, rd, gs, ls),

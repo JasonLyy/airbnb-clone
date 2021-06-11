@@ -98,5 +98,5 @@ func main() {
 	}
 
 	result := m.Migrate()
-	fmt.Println(result)
+	fmt.Println("Errors: ", result)
 }

@@ -1,11 +1,12 @@
-package auth
+package middleware
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
-	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/service/guest"
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,7 +16,7 @@ type contextKey struct {
 	name string
 }
 
-func Auth(a AuthInterface, t TokenInterface, g repository.GuestRepository) func(echo.HandlerFunc) echo.HandlerFunc {
+func Auth(a auth.AuthInterface, t auth.TokenInterface, g guest.GuestRepository) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			tokenString := t.ExtractToken(c.Request())

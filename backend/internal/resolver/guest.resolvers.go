@@ -13,7 +13,7 @@ import (
 func (r *mutationResolver) CreateGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error) {
 	auth, err := r.guestService.CreateGuest(input)
 	if err != nil {
-		return &model.AuthPayload{}, nil
+		return &model.AuthPayload{}, err
 	}
 
 	return auth, nil
@@ -37,8 +37,8 @@ func (r *mutationResolver) LogoutGuest(ctx context.Context, accessToken string) 
 	return l, nil
 }
 
-func (r *mutationResolver) RefreshToken(ctx context.Context, rt *string) (*model.AuthPayload, error) {
-	return r.guestService.RefreshToken(*rt)
+func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken *string) (*model.AuthPayload, error) {
+	return r.guestService.RefreshToken(*refreshToken)
 }
 
 // Mutation returns generated.MutationResolver implementation.

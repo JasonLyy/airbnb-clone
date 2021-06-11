@@ -33,14 +33,6 @@ func NewTokenService() *tokenService {
 	return &tokenService{}
 }
 
-type TokenInterface interface {
-	CreateToken(id int64) (*TokenDetails, error)
-	GetAccessDetailsFromToken(string) (*AccessDetails, error)
-	ExtractToken(*http.Request) string
-}
-
-var _ TokenInterface = &tokenService{}
-
 func (t *tokenService) CreateToken(id int64) (*TokenDetails, error) {
 	td := &TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 30).Unix() //expires after 30 min

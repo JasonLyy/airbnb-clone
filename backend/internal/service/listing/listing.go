@@ -6,21 +6,15 @@ import (
 	"math"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
-	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/service/review"
 )
 
-type ListingInterface interface {
-	ListingConnection(page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
-	Reviews(id int64) (int64, error)
-	Rating(id int64) (float64, error)
-}
-
 type listingService struct {
-	listingRepo repository.ListingRepository
-	reviewRepo  repository.ReviewRepository
+	listingRepo ListingRepository
+	reviewRepo  review.ReviewRepository
 }
 
-func NewListingService(l repository.ListingRepository, r repository.ReviewRepository) *listingService {
+func NewListingService(l ListingRepository, r review.ReviewRepository) *listingService {
 	return &listingService{
 		listingRepo: l,
 		reviewRepo:  r,
@@ -90,6 +84,7 @@ func listingsToConnection(listings []*model.Listing, page model.PaginationInput,
 	return &model.ListingConnection{PageInfo: &pageInfo, Edges: listingEdges, TotalResults: int(count)}
 }
 
+// this should not belong here. possibly a centralised helper location..?
 func encodeCursor(id int64) string {
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, uint64(id))

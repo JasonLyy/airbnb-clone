@@ -10,18 +10,9 @@ import (
 	"github.com/go-redis/redis/v7"
 )
 
-type AuthInterface interface {
-	CreateAuth(int64, *TokenDetails) error
-	FetchAuthUser(*AccessDetails) (int64, error)
-	InvalidateAuth(auth *AccessDetails) error
-	RefreshAuth(rt string) (*model.AuthPayload, error)
-}
-
 type authService struct {
 	client *redis.Client
 }
-
-var _ AuthInterface = &authService{}
 
 func NewAuthService(c *redis.Client) *authService {
 	return &authService{client: c}

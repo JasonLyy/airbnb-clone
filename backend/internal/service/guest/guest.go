@@ -4,32 +4,22 @@ import (
 	"fmt"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
-	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
 )
-
-type GuestInterface interface {
-	CreateGuest(input model.CredentialsInput) (*model.AuthPayload, error)
-	LoginGuest(input model.CredentialsInput) (*model.AuthPayload, error)
-	LogoutGuest(accessToken string) (*model.LogoutPayload, error)
-	RefreshToken(refreshToken string) (*model.AuthPayload, error)
-}
 
 type guestService struct {
 	authService  auth.AuthInterface
 	tokenService auth.TokenInterface
-	guestRepo    repository.GuestRepository
+	guestRepo    GuestRepository
 }
 
-func NewGuestService(a auth.AuthInterface, t auth.TokenInterface, g repository.GuestRepository) *guestService {
+func NewGuestService(a auth.AuthInterface, t auth.TokenInterface, g GuestRepository) *guestService {
 	return &guestService{
 		authService:  a,
 		tokenService: t,
 		guestRepo:    g,
 	}
 }
-
-var _ GuestInterface = guestService{}
 
 func (g guestService) CreateGuest(input model.CredentialsInput) (*model.AuthPayload, error) {
 	guest, err := g.guestRepo.CreateGuest(input)
