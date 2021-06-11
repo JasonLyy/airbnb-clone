@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/JasonLyy/airbnb-clone/backend/internal/controllers"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/controller"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/repository"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/guest"
@@ -22,8 +22,8 @@ func Init(db *gorm.DB, rd *redis.Client, guestService guest.GuestInterface, list
 	e.Use(middleware.Recover())
 	e.Use()
 
-	e.Any("/graphql", controllers.GraphQl(db, rd, guestService, listingService))
-	e.GET("/graphql/playground", controllers.GraphQlPlayground())
+	e.Any("/graphql", controller.GraphQl(db, rd, guestService, listingService))
+	e.GET("/graphql/playground", controller.GraphQlPlayground())
 
 	return e
 }
