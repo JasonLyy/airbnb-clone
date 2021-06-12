@@ -10,10 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type DB struct {
-	DB *gorm.DB
-}
-
 type dbConfig struct {
 	host     string
 	user     string
@@ -60,7 +56,7 @@ func migrate(db *gorm.DB) error {
 	return err
 }
 
-func Init() *DB {
+func InitDb() *gorm.DB {
 	vars, err := loadDbVariables()
 	if err != nil {
 		panic("Failure to get database environment variables.")
@@ -83,5 +79,5 @@ func Init() *DB {
 		panic("Failed to migrate")
 	}
 
-	return &DB{DB: db}
+	return db
 }

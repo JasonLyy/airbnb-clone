@@ -10,12 +10,12 @@ import (
 )
 
 func main() {
-	database := db.Init()
+	database := db.InitDb()
 	redis := db.InitRedis()
 
-	guestRepo := repository.NewGuestRepository(database.DB)
-	listingRepo := repository.NewListingRepository(database.DB)
-	reviewRepo := repository.NewReviewRepository(database.DB)
+	guestRepo := repository.NewGuestRepository(database)
+	listingRepo := repository.NewListingRepository(database)
+	reviewRepo := repository.NewReviewRepository(database)
 
 	authService := auth.NewAuthService(redis)
 	tokenService := auth.NewTokenService()

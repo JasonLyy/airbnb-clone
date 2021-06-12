@@ -24,3 +24,4 @@ yarn-error.log*
 .DS_Store
 db/volume
 db/pgadmin_servers
+db/redis/redis-data
