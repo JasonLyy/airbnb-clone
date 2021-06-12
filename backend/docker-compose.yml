@@ -29,6 +29,7 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 3
+
   redis:
     image: redis:alpine
     container_name: airbnb-clone-server-redis
@@ -38,3 +39,15 @@ services:
       - ./db/redis/redis.conf:/redis.conf
     command: ["redis-server", "/redis.conf"]
           
+  server:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    container_name: airbnb-clone-server
+    ports: 
+      - 8001:8001
+    depends_on: 
+      - postgres
+      - redis
+    volumes: 
+      - "${PWD}:/app"
