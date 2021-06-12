@@ -8,12 +8,12 @@ import (
 )
 
 type guestService struct {
-	authService  auth.AuthInterface
-	tokenService auth.TokenInterface
+	authService  auth.AuthService
+	tokenService auth.TokenService
 	guestRepo    GuestRepository
 }
 
-func NewGuestService(a auth.AuthInterface, t auth.TokenInterface, g GuestRepository) *guestService {
+func NewGuestService(a auth.AuthService, t auth.TokenService, g GuestRepository) *guestService {
 	return &guestService{
 		authService:  a,
 		tokenService: t,
@@ -63,6 +63,10 @@ func (g guestService) LoginGuest(input model.CredentialsInput) (*model.AuthPaylo
 		AccessToken:  tk.AccessToken,
 		RefreshToken: tk.RefreshToken,
 	}, nil
+}
+
+func (g guestService) FindGuest(id int64) (*model.Guest, error) {
+	return g.guestRepo.FindGuestById(id)
 }
 
 func (g guestService) LogoutGuest(accessToken string) (*model.LogoutPayload, error) {

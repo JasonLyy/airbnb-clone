@@ -16,7 +16,7 @@ type contextKey struct {
 	name string
 }
 
-func Auth(a auth.AuthInterface, t auth.TokenInterface, g guest.GuestRepository) func(echo.HandlerFunc) echo.HandlerFunc {
+func Auth(a auth.AuthService, t auth.TokenService, g guest.GuestService) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			tokenString := t.ExtractToken(c.Request())
@@ -34,7 +34,7 @@ func Auth(a auth.AuthInterface, t auth.TokenInterface, g guest.GuestRepository) 
 				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
 			}
 
-			guest, err := g.FindGuestById(userId)
+			guest, err := g.FindGuest(userId)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
 			}

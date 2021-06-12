@@ -23,7 +23,6 @@ func main() {
 	guestService := guest.NewGuestService(authService, tokenService, guestRepo)
 	listingService := listing.NewListingService(listingRepo, reviewRepo)
 
-	router := router.Init(database.DB, redis, guestService, listingService)
-
+	router := router.NewRouterService(authService, tokenService, guestService, listingService).Init()
 	router.Logger.Fatal(router.Start(":8001"))
 }

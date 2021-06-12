@@ -10,6 +10,7 @@ type GuestRepository interface {
 
 type GuestService interface {
 	CreateGuest(input model.CredentialsInput) (*model.AuthPayload, error)
+	FindGuest(id int64) (*model.Guest, error)
 	LoginGuest(input model.CredentialsInput) (*model.AuthPayload, error)
 	LogoutGuest(accessToken string) (*model.LogoutPayload, error)
 	RefreshToken(refreshToken string) (*model.AuthPayload, error)
