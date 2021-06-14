@@ -4,6 +4,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import styled from "styled-components";
 import { useOutsideAlerter } from "../../hooks/outsideAlerter";
 import MenuDropdown from "./MenuDropdown";
+import LoginModal from "../LoginModal";
 
 const Navigation = styled.nav`
   display: flex;
@@ -44,6 +45,8 @@ const MenuButton = styled.button`
 
 const UserMenu: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
+
   const menuRef = useRef<HTMLDivElement>(null);
 
   useOutsideAlerter(menuRef, () => {
@@ -58,7 +61,19 @@ const UserMenu: React.FC = () => {
           <AccountIcon />
         </MenuButton>
 
-        {menuOpen && <MenuDropdown />}
+        {menuOpen && (
+          <MenuDropdown
+            closeMenu={() => setMenuOpen(false)}
+            onLoginClick={() => setLoginModalOpen(true)}
+          />
+        )}
+
+        {
+          <LoginModal
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
+        }
       </Menu>
     </Navigation>
   );

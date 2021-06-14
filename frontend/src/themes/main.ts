@@ -45,7 +45,7 @@ export const mainTheme: DefaultTheme = {
     primaryComponent: "#222222",
     secondaryComponent: "#717171",
     secondaryLighterComponent: "#B0B0B0",
-    alternativePrimary: "##008489",
+    alternativePrimary: "#008489",
     alternativeSecondary: "#FC642D",
   },
 

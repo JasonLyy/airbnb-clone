@@ -28,12 +28,26 @@ const MenuItem = styled.a`
   }
 `;
 
-const MenuDropdown: React.FC = () => {
+interface MenuDropdownProps {
+  closeMenu: () => void;
+  onLoginClick: () => void;
+}
+const MenuDropdown: React.FC<MenuDropdownProps> = ({
+  closeMenu,
+  onLoginClick,
+}) => {
+  const renderLoginModal = () => {
+    closeMenu();
+    onLoginClick();
+  };
+
   return (
-    <Menu>
-      <MenuItem>Sign Up</MenuItem>
-      <MenuItem>Login</MenuItem>
-    </Menu>
+    <>
+      <Menu>
+        <MenuItem onClick={() => renderLoginModal()}>Sign Up</MenuItem>
+        <MenuItem onClick={() => renderLoginModal()}>Login</MenuItem>
+      </Menu>
+    </>
   );
 };
 
