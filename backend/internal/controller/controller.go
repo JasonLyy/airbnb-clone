@@ -13,7 +13,7 @@ import (
 func GraphQl(gs guest.GuestService, ls listing.ListingService) echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		config := generated.Config{
-			Resolvers: resolver.New(gs, ls),
+			Resolvers: resolver.New(gs, ls, c),
 		}
 
 		c.Request().Header.Set("Content-Type", "application/json")

@@ -33,7 +33,6 @@ func (r routerService) Init() *echo.Echo {
 	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.Use(customMiddleware.Auth(r.as, r.ts, r.gs))
 	e.Use(middleware.Recover())
-	e.Use()
 
 	e.Any("/graphql", controller.GraphQl(r.gs, r.ls))
 	e.GET("/graphql/playground", controller.GraphQlPlayground())

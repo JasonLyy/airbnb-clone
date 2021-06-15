@@ -11,21 +11,32 @@ import (
 )
 
 func (r *mutationResolver) CreateGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error) {
-	auth, err := r.guestService.CreateGuest(input)
+	t, err := r.guestService.CreateGuest(input)
+
 	if err != nil {
 		return &model.AuthPayload{}, err
 	}
 
-	return auth, nil
+	SetAuthCookie(r.echoCtx, t)
+
+	return &model.AuthPayload{
+		AccessToken:  t.AccessToken,
+		RefreshToken: t.RefreshToken,
+	}, nil
 }
 
 func (r *mutationResolver) LoginGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error) {
-	auth, err := r.guestService.LoginGuest(input)
+	t, err := r.guestService.LoginGuest(input)
 	if err != nil {
-		return &model.AuthPayload{}, nil
+		return &model.AuthPayload{}, err
 	}
 
-	return auth, nil
+	SetAuthCookie(r.echoCtx, t)
+
+	return &model.AuthPayload{
+		AccessToken:  t.AccessToken,
+		RefreshToken: t.RefreshToken,
+	}, nil
 }
 
 func (r *mutationResolver) LogoutGuest(ctx context.Context, accessToken string) (*model.LogoutPayload, error) {

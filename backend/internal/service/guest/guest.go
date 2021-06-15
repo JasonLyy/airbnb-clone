@@ -21,48 +21,42 @@ func NewGuestService(a auth.AuthService, t auth.TokenService, g GuestRepository)
 	}
 }
 
-func (g guestService) CreateGuest(input model.CredentialsInput) (*model.AuthPayload, error) {
+func (g guestService) CreateGuest(input model.CredentialsInput) (*auth.TokenDetails, error) {
 	guest, err := g.guestRepo.CreateGuest(input)
 	if err != nil {
-		return &model.AuthPayload{}, err
+		return &auth.TokenDetails{}, err
 	}
 
 	token, err := g.tokenService.CreateToken(guest.ID)
 	if err != nil {
-		return &model.AuthPayload{}, err
+		return &auth.TokenDetails{}, err
 	}
 
 	err = g.authService.CreateAuth(guest.ID, token)
 	if err != nil {
-		return &model.AuthPayload{}, err
+		return &auth.TokenDetails{}, err
 	}
 
-	return &model.AuthPayload{
-		AccessToken:  token.AccessToken,
-		RefreshToken: token.RefreshToken,
-	}, nil
+	return token, nil
 }
 
-func (g guestService) LoginGuest(input model.CredentialsInput) (*model.AuthPayload, error) {
+func (g guestService) LoginGuest(input model.CredentialsInput) (*auth.TokenDetails, error) {
 	guest, err := g.guestRepo.Authenticate(input.Email, input.Password)
 	if err != nil {
-		return &model.AuthPayload{}, fmt.Errorf("unauthorized")
+		return &auth.TokenDetails{}, fmt.Errorf("unauthorized")
 	}
 
 	tk, err := g.tokenService.CreateToken(guest.ID)
 	if err != nil {
-		return &model.AuthPayload{}, fmt.Errorf("unauthorized")
+		return &auth.TokenDetails{}, fmt.Errorf("unauthorized")
 	}
 
 	err = g.authService.CreateAuth(guest.ID, tk)
 	if err != nil {
-		return &model.AuthPayload{}, err
+		return &auth.TokenDetails{}, err
 	}
 
-	return &model.AuthPayload{
-		AccessToken:  tk.AccessToken,
-		RefreshToken: tk.RefreshToken,
-	}, nil
+	return tk, nil
 }
 
 func (g guestService) FindGuest(id int64) (*model.Guest, error) {
@@ -70,7 +64,12 @@ func (g guestService) FindGuest(id int64) (*model.Guest, error) {
 }
 
 func (g guestService) LogoutGuest(accessToken string) (*model.LogoutPayload, error) {
-	auth, err := g.tokenService.GetAccessDetailsFromToken(accessToken)
+	token, err := g.tokenService.ParseToken(accessToken)
+	if err != nil {
+		return &model.LogoutPayload{}, err
+	}
+
+	auth, err := g.tokenService.GetAccessDetailsFromToken(token)
 	if err != nil {
 		return &model.LogoutPayload{}, err
 	}

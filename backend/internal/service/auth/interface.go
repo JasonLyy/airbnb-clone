@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type AuthService interface {
@@ -14,7 +15,8 @@ type AuthService interface {
 }
 
 type TokenService interface {
+	GetAccessDetailsFromToken(token *jwt.Token) (*AccessDetails, error)
 	CreateToken(id int64) (*TokenDetails, error)
-	GetAccessDetailsFromToken(string) (*AccessDetails, error)
 	ExtractToken(*http.Request) string
+	ParseToken(t string) (*jwt.Token, error)
 }

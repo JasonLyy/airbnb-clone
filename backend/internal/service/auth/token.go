@@ -71,14 +71,9 @@ func (t *tokenService) CreateToken(id int64) (*TokenDetails, error) {
 	return td, nil
 }
 
-func (t *tokenService) GetAccessDetailsFromToken(ts string) (*AccessDetails, error) {
-	token, err := parseToken(ts)
-	if err != nil {
+func (t *tokenService) GetAccessDetailsFromToken(token *jwt.Token) (*AccessDetails, error) {
+	if err := verifyToken(token); err != nil {
 		return nil, err
-	}
-
-	if verifiedErr := verifyToken(token); verifiedErr != nil {
-		return nil, verifiedErr
 	}
 
 	return &AccessDetails{
@@ -96,8 +91,8 @@ func (t *tokenService) ExtractToken(r *http.Request) string {
 	return ""
 }
 
-func parseToken(t string) (*jwt.Token, error) {
-	token, err := jwt.ParseWithClaims(t, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (t *tokenService) ParseToken(ts string) (*jwt.Token, error) {
+	token, err := jwt.ParseWithClaims(ts, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}

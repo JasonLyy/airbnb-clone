@@ -10,21 +10,28 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var userCtxKey = &contextKey{"user"}
+var userCtxKey = &userContextKey{"user"}
 
-type contextKey struct {
+type userContextKey struct {
 	name string
 }
 
 func Auth(a auth.AuthService, t auth.TokenService, g guest.GuestService) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			tokenString := t.ExtractToken(c.Request())
-			if len(tokenString) == 0 {
+
+			ac, err := c.Cookie("access_token")
+			if err != nil {
 				return next(c)
 			}
+			tokenString := ac.Value
 
-			access, err := t.GetAccessDetailsFromToken(tokenString)
+			token, err := t.ParseToken(tokenString)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
+			}
+
+			access, err := t.GetAccessDetailsFromToken(token)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
 			}

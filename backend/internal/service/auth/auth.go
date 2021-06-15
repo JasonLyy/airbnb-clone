@@ -11,11 +11,12 @@ import (
 )
 
 type authService struct {
-	client *redis.Client
+	client       *redis.Client //todo: Do we need a repository for this? probably
+	tokenService TokenService
 }
 
-func NewAuthService(c *redis.Client) *authService {
-	return &authService{client: c}
+func NewAuthService(c *redis.Client, ts TokenService) *authService {
+	return &authService{client: c, tokenService: ts}
 }
 
 type AccessDetails struct {
@@ -53,7 +54,7 @@ func (a *authService) FetchAuthUser(auth *AccessDetails) (int64, error) {
 }
 
 func (a *authService) RefreshAuth(rt string) (*model.AuthPayload, error) {
-	token, err := parseToken(rt)
+	token, err := a.tokenService.ParseToken(rt)
 	if err != nil {
 		return nil, err
 	}

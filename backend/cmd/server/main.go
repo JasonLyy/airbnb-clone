@@ -17,8 +17,8 @@ func main() {
 	listingRepo := repository.NewListingRepository(database)
 	reviewRepo := repository.NewReviewRepository(database)
 
-	authService := auth.NewAuthService(redis)
 	tokenService := auth.NewTokenService()
+	authService := auth.NewAuthService(redis, tokenService)
 
 	guestService := guest.NewGuestService(authService, tokenService, guestRepo)
 	listingService := listing.NewListingService(listingRepo, reviewRepo)

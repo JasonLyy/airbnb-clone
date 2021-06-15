@@ -1,6 +1,9 @@
 package guest
 
-import "github.com/JasonLyy/airbnb-clone/backend/internal/model"
+import (
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
+)
 
 type GuestRepository interface {
 	CreateGuest(input model.CredentialsInput) (*model.Guest, error)
@@ -9,9 +12,9 @@ type GuestRepository interface {
 }
 
 type GuestService interface {
-	CreateGuest(input model.CredentialsInput) (*model.AuthPayload, error)
+	CreateGuest(input model.CredentialsInput) (*auth.TokenDetails, error)
+	LoginGuest(input model.CredentialsInput) (*auth.TokenDetails, error)
 	FindGuest(id int64) (*model.Guest, error)
-	LoginGuest(input model.CredentialsInput) (*model.AuthPayload, error)
 	LogoutGuest(accessToken string) (*model.LogoutPayload, error)
 	RefreshToken(refreshToken string) (*model.AuthPayload, error)
 }
