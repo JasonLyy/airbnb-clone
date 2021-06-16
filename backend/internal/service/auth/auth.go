@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 	"github.com/go-redis/redis/v7"
 )
 
@@ -53,7 +52,7 @@ func (a *authService) FetchAuthUser(auth *AccessDetails) (int64, error) {
 	return userID, nil
 }
 
-func (a *authService) RefreshAuth(rt string) (*model.AuthPayload, error) {
+func (a *authService) RefreshAuth(rt string) (*TokenDetails, error) {
 	token, err := a.tokenService.ParseToken(rt)
 	if err != nil {
 		return nil, err
@@ -76,19 +75,16 @@ func (a *authService) RefreshAuth(rt string) (*model.AuthPayload, error) {
 		return nil, delErr
 	}
 
-	newTokens, err := NewTokenService().CreateToken(claims.UserId)
+	newToken, err := NewTokenService().CreateToken(claims.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	if createErr := a.CreateAuth(claims.UserId, newTokens); createErr != nil {
+	if createErr := a.CreateAuth(claims.UserId, newToken); createErr != nil {
 		return nil, createErr
 	}
 
-	return &model.AuthPayload{
-		AccessToken:  newTokens.AccessToken,
-		RefreshToken: newTokens.RefreshToken,
-	}, nil
+	return newToken, nil
 }
 
 func (a *authService) InvalidateAuth(auth *AccessDetails) error {

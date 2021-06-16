@@ -3,7 +3,6 @@ package auth
 import (
 	"net/http"
 
-	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -11,7 +10,7 @@ type AuthService interface {
 	CreateAuth(int64, *TokenDetails) error
 	FetchAuthUser(*AccessDetails) (int64, error)
 	InvalidateAuth(auth *AccessDetails) error
-	RefreshAuth(rt string) (*model.AuthPayload, error)
+	RefreshAuth(rt string) (*TokenDetails, error)
 }
 
 type TokenService interface {

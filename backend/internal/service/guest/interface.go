@@ -16,5 +16,5 @@ type GuestService interface {
 	LoginGuest(input model.CredentialsInput) (*auth.TokenDetails, error)
 	FindGuest(id int64) (*model.Guest, error)
 	LogoutGuest(accessToken string) (*model.LogoutPayload, error)
-	RefreshToken(refreshToken string) (*model.AuthPayload, error)
+	RefreshToken(refreshToken string) (*auth.TokenDetails, error)
 }

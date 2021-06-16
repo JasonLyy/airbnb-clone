@@ -15,7 +15,7 @@ func SetAuthCookie(ctx echo.Context, token *auth.TokenDetails) {
 		HttpOnly: true,
 		Expires:  time.Unix(token.AtExpires, 0),
 		Path:     "/",
-		// SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteStrictMode,
 	})
 	ctx.SetCookie(&http.Cookie{
 		Name:     "refresh_token",
@@ -23,6 +23,25 @@ func SetAuthCookie(ctx echo.Context, token *auth.TokenDetails) {
 		HttpOnly: true,
 		Expires:  time.Unix(token.RtExpires, 0),
 		Path:     "/",
-		// SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteStrictMode,
+	})
+}
+
+func ClearAuthCookie(ctx echo.Context) {
+	ctx.SetCookie(&http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		HttpOnly: true,
+		Expires:  time.Unix(0, 0),
+		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
+	})
+	ctx.SetCookie(&http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		HttpOnly: true,
+		Expires:  time.Unix(0, 0),
+		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
 	})
 }

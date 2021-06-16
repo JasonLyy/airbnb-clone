@@ -83,11 +83,11 @@ func (g guestService) LogoutGuest(accessToken string) (*model.LogoutPayload, err
 	}, nil
 }
 
-func (g guestService) RefreshToken(refreshToken string) (*model.AuthPayload, error) {
-	auth, err := g.authService.RefreshAuth(refreshToken)
+func (g guestService) RefreshToken(refreshToken string) (*auth.TokenDetails, error) {
+	token, err := g.authService.RefreshAuth(refreshToken)
 	if err != nil {
-		return &model.AuthPayload{}, err
+		return &auth.TokenDetails{}, err
 	}
 
-	return auth, nil
+	return token, nil
 }

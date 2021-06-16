@@ -45,11 +45,23 @@ func (r *mutationResolver) LogoutGuest(ctx context.Context, accessToken string) 
 		return &model.LogoutPayload{}, nil
 	}
 
+	ClearAuthCookie(r.echoCtx)
+
 	return l, nil
 }
 
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken *string) (*model.AuthPayload, error) {
-	return r.guestService.RefreshToken(*refreshToken)
+	t, err := r.guestService.RefreshToken(*refreshToken)
+	if err != nil {
+		return &model.AuthPayload{}, nil
+	}
+
+	SetAuthCookie(r.echoCtx, t)
+
+	return &model.AuthPayload{
+		AccessToken:  t.AccessToken,
+		RefreshToken: t.RefreshToken,
+	}, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
