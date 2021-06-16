@@ -36,8 +36,8 @@ const LoginTabs: React.FC<LoginTabsProps> = ({ tabState, onChange }) => {
 };
 
 export enum TabState {
-  SIGNUP = 1,
-  SIGNIN = 2,
+  SIGNUP = 0,
+  SIGNIN = 1,
 }
 
 export default LoginTabs;

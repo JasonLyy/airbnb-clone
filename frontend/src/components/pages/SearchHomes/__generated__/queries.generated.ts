@@ -1,25 +1,7 @@
 import * as Types from '../../../../types/types.generated';
 
 import { useQuery, UseQueryOptions } from 'react-query';
-
-function fetcher<TData, TVariables>(query: string, variables?: TVariables) {
-  return async (): Promise<TData> => {
-    const res = await fetch("http://localhost:8001/graphql", {
-      method: "POST",
-      body: JSON.stringify({ query, variables }),
-    });
-    
-    const json = await res.json();
-
-    if (json.errors) {
-      const { message } = json.errors[0];
-
-      throw new Error(message);
-    }
-
-    return json.data;
-  }
-}
+import { fetchData } from 'App/fetcher';
 export type PageInfoFieldsFragment = (
   { __typename?: 'PageInfo' }
   & Pick<Types.PageInfo, 'startCursor' | 'endCursor' | 'hasNextPage' | 'hasPreviousPage'>
@@ -104,6 +86,6 @@ export const useGetListingsQuery = <
     ) => 
     useQuery<GetListingsQuery, TError, TData>(
       ['getListings', variables],
-      fetcher<GetListingsQuery, GetListingsQueryVariables>(GetListingsDocument, variables),
+      fetchData<GetListingsQuery, GetListingsQueryVariables>(GetListingsDocument, variables),
       options
     );

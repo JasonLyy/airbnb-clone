@@ -13,14 +13,31 @@ export type Scalars = {
   Time: any;
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+};
+
 export type Connection = {
   pageInfo: PageInfo;
   edges: Array<Maybe<Edge>>;
 };
 
+export type CredentialsInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
 export type Edge = {
   cursor: Scalars['String'];
   node: Node;
+};
+
+export type Guest = {
+  __typename?: 'Guest';
+  id: Scalars['ID'];
+  email: Scalars['String'];
 };
 
 export type Listing = Node & {
@@ -45,7 +62,6 @@ export type Listing = Node & {
   price?: Maybe<Scalars['Float']>;
   minimumNights?: Maybe<Scalars['Int']>;
   maximumNights?: Maybe<Scalars['Int']>;
-  hostId?: Maybe<Scalars['String']>;
   reviews?: Maybe<Scalars['Int']>;
   rating?: Maybe<Scalars['Float']>;
 };
@@ -70,6 +86,39 @@ export type ListingsInput = {
   adults?: Maybe<Scalars['Int']>;
   children?: Maybe<Scalars['Int']>;
   infants?: Maybe<Scalars['Int']>;
+};
+
+export type LogoutPayload = {
+  __typename?: 'LogoutPayload';
+  success: Scalars['Boolean'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createGuest: AuthPayload;
+  loginGuest: AuthPayload;
+  logoutGuest: LogoutPayload;
+  refreshToken: AuthPayload;
+};
+
+
+export type MutationCreateGuestArgs = {
+  input: CredentialsInput;
+};
+
+
+export type MutationLoginGuestArgs = {
+  input: CredentialsInput;
+};
+
+
+export type MutationLogoutGuestArgs = {
+  accessToken: Scalars['String'];
+};
+
+
+export type MutationRefreshTokenArgs = {
+  refreshToken?: Maybe<Scalars['String']>;
 };
 
 export type Node = {

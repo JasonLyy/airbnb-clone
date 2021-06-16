@@ -5,6 +5,10 @@ import Close from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
 import HorizontalDivider from "../pages/SearchHomes/Results/ListingCard/HorizontalDivider";
 import LoginTabs, { TabState } from "./LoginTabs";
+import {
+  useCreateGuestMutation,
+  useLoginGuestMutation,
+} from "./__generated__/mutations.generated";
 
 const Container = styled.div`
   width: 100%;
@@ -117,9 +121,32 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
   } = useForm<LoginInputs>();
 
   const [tabState, setTabState] = useState<TabState>(TabState.SIGNUP);
+  const { mutate: createGuest } = useCreateGuestMutation({
+    onSuccess: (v) => console.log(v),
+  });
+  const { mutate: loginGuest } = useLoginGuestMutation({
+    onSuccess: (v) => console.log(v),
+  });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    console.log(data);
+    switch (tabState) {
+      case TabState.SIGNUP:
+        createGuest({
+          input: {
+            email: data.email,
+            password: data.password,
+          },
+        });
+        break;
+      case TabState.SIGNIN:
+        loginGuest({
+          input: {
+            email: data.email,
+            password: data.password,
+          },
+        });
+        break;
+    }
   };
 
   return (
