@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/JasonLyy/airbnb-clone/backend/internal/controller"
 	customMiddleware "github.com/JasonLyy/airbnb-clone/backend/internal/middleware"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
@@ -30,7 +32,11 @@ func (r routerService) Init() *echo.Echo {
 	e := echo.New()
 
 	//todo: refactor to use middleware wrappers around built in middleware
-	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+		AllowCredentials: true,
+	}))
 	e.Use(customMiddleware.Auth(r.as, r.ts, r.gs))
 	e.Use(middleware.Recover())
 

@@ -15,7 +15,7 @@ func SetAuthCookie(ctx echo.Context, token *auth.TokenDetails) {
 		HttpOnly: true,
 		Expires:  time.Unix(token.AtExpires, 0),
 		Path:     "/",
-		SameSite: 1,
+		// SameSite: http.SameSiteStrictMode,
 	})
 	ctx.SetCookie(&http.Cookie{
 		Name:     "refresh_token",
@@ -23,6 +23,6 @@ func SetAuthCookie(ctx echo.Context, token *auth.TokenDetails) {
 		HttpOnly: true,
 		Expires:  time.Unix(token.RtExpires, 0),
 		Path:     "/",
-		SameSite: 1,
+		// SameSite: http.SameSiteStrictMode,
 	})
 }
