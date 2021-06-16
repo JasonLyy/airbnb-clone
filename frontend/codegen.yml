@@ -3,7 +3,8 @@ schema: "../backend/internal/schema/*.graphqls"
 documents: "src/**/!(*.d).{ts,tsx}"
 generates:
   src/types/types.generated.ts:
-    - "typescript"
+    plugins:
+      - "typescript"
   src/:
     preset: near-operation-file
     presetConfig:
@@ -15,4 +16,5 @@ generates:
       - "typescript-react-query"
     config:
       fetcher:
-        endpoint: "http://localhost:8001/graphql"
+        # endpoint: "http://localhost:8001/graphql"
+        func: 'App/fetcher#fetchData'

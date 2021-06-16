@@ -44,6 +44,9 @@ const config: webpack.Configuration = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      App: path.resolve(__dirname, "src/"),
+    },
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({
