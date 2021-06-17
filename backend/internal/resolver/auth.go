@@ -22,7 +22,7 @@ func SetAuthCookie(ctx echo.Context, token *auth.TokenDetails) {
 		Value:    token.RefreshToken,
 		HttpOnly: true,
 		Expires:  time.Unix(token.RtExpires, 0),
-		Path:     "/",
+		Path:     "/auth",
 		SameSite: http.SameSiteStrictMode,
 	})
 }

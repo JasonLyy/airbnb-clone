@@ -19,8 +19,10 @@ type Node interface {
 }
 
 type AuthPayload struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken     string `json:"accessToken"`
+	AccessTokenExp  int    `json:"accessTokenExp"`
+	RefreshToken    string `json:"refreshToken"`
+	RefreshTokenExp int    `json:"refreshTokenExp"`
 }
 
 type CredentialsInput struct {

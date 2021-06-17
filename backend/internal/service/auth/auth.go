@@ -55,23 +55,30 @@ func (a *authService) FetchAuthUser(auth *AccessDetails) (int64, error) {
 func (a *authService) RefreshAuth(rt string) (*TokenDetails, error) {
 	token, err := a.tokenService.ParseToken(rt)
 	if err != nil {
+		fmt.Println("Could not parse token")
 		return nil, err
 	}
 
 	if verified := verifyToken(token); verified != nil {
+		fmt.Println("Could not verify token")
 		return nil, fmt.Errorf("Unauthorized")
 	}
 
 	claims, ok := token.Claims.(*TokenClaims)
 	if !ok && !token.Valid {
+		fmt.Println("Could not verify token claims")
 		return nil, fmt.Errorf("Unauthorized")
 	}
 
-	if _, invalidToken := a.client.Get(claims.RefreshUuid).Result(); invalidToken != nil {
-		return nil, fmt.Errorf("Unauthorized")
-	}
+	//todo: WE HAVE THIS ISSUE WHERE IN REACT THIS FAILS SO POSSIBLE CONCURRENCY ERROR? WE NEED MUTEX? THIS
+	// WHOLE THING NEEDS MUTEX?
+	// if _, invalidToken := a.client.Get(claims.RefreshUuid).Result(); invalidToken != nil {
+	// 	fmt.Println("Could not verify token claims")
+	// 	return nil, fmt.Errorf("Unauthorized")
+	// }
 
 	if delErr := a.DeleteRefresh(claims.RefreshUuid); delErr != nil {
+		fmt.Println("Could not delete refresh token")
 		return nil, delErr
 	}
 

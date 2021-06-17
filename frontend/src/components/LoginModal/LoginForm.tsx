@@ -122,10 +122,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
 
   const [tabState, setTabState] = useState<TabState>(TabState.SIGNUP);
   const { mutate: createGuest } = useCreateGuestMutation({
-    onSuccess: (v) => console.log(v),
+    onSuccess: (v: unknown) => console.log(v),
   });
   const { mutate: loginGuest } = useLoginGuestMutation({
-    onSuccess: (v) => console.log(v),
+    onSuccess: (v: unknown) => console.log(v),
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {

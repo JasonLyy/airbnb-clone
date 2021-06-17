@@ -42,6 +42,7 @@ func (r routerService) Init() *echo.Echo {
 
 	e.Any("/graphql", controller.GraphQl(r.gs, r.ls))
 	e.GET("/graphql/playground", controller.GraphQlPlayground())
+	e.POST("/auth", controller.Auth(r.gs, r.ls, r.ts))
 
 	return e
 }

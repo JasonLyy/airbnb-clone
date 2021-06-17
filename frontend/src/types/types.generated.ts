@@ -118,7 +118,7 @@ export type MutationLogoutGuestArgs = {
 
 
 export type MutationRefreshTokenArgs = {
-  refreshToken?: Maybe<Scalars['String']>;
+  refreshToken: Scalars['String'];
 };
 
 export type Node = {

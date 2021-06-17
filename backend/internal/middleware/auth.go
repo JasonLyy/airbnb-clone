@@ -19,16 +19,16 @@ type userContextKey struct {
 func Auth(a auth.AuthService, t auth.TokenService, g guest.GuestService) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-
-			ac, err := c.Cookie("access_token")
+			at, err := c.Cookie("access_token")
 			if err != nil {
 				return next(c)
 			}
-			tokenString := ac.Value
+
+			tokenString := at.Value
 
 			token, err := t.ParseToken(tokenString)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
+				return next(c)
 			}
 
 			access, err := t.GetAccessDetailsFromToken(token)

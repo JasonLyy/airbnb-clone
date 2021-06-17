@@ -49,8 +49,10 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AuthPayload struct {
-		AccessToken  func(childComplexity int) int
-		RefreshToken func(childComplexity int) int
+		AccessToken     func(childComplexity int) int
+		AccessTokenExp  func(childComplexity int) int
+		RefreshToken    func(childComplexity int) int
+		RefreshTokenExp func(childComplexity int) int
 	}
 
 	Guest struct {
@@ -153,12 +155,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AuthPayload.AccessToken(childComplexity), true
 
+	case "AuthPayload.accessTokenExp":
+		if e.complexity.AuthPayload.AccessTokenExp == nil {
+			break
+		}
+
+		return e.complexity.AuthPayload.AccessTokenExp(childComplexity), true
+
 	case "AuthPayload.refreshToken":
 		if e.complexity.AuthPayload.RefreshToken == nil {
 			break
 		}
 
 		return e.complexity.AuthPayload.RefreshToken(childComplexity), true
+
+	case "AuthPayload.refreshTokenExp":
+		if e.complexity.AuthPayload.RefreshTokenExp == nil {
+			break
+		}
+
+		return e.complexity.AuthPayload.RefreshTokenExp(childComplexity), true
 
 	case "Guest.email":
 		if e.complexity.Guest.Email == nil {
@@ -529,7 +545,9 @@ var sources = []*ast.Source{
 
 type AuthPayload {
   accessToken: String!
+  accessTokenExp: Int!
   refreshToken: String!
+  refreshTokenExp: Int!
 }
 
 type LogoutPayload {
@@ -805,6 +823,41 @@ func (ec *executionContext) _AuthPayload_accessToken(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _AuthPayload_accessTokenExp(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AuthPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessTokenExp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _AuthPayload_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -838,6 +891,41 @@ func (ec *executionContext) _AuthPayload_refreshToken(ctx context.Context, field
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AuthPayload_refreshTokenExp(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AuthPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshTokenExp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Guest_id(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
@@ -3529,8 +3617,18 @@ func (ec *executionContext) _AuthPayload(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "accessTokenExp":
+			out.Values[i] = ec._AuthPayload_accessTokenExp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "refreshToken":
 			out.Values[i] = ec._AuthPayload_refreshToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshTokenExp":
+			out.Values[i] = ec._AuthPayload_refreshTokenExp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

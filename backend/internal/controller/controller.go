@@ -1,10 +1,15 @@
 package controller
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/resolver"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/service/auth"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/guest"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/service/listing"
 	"github.com/labstack/echo/v4"
@@ -31,4 +36,41 @@ func GraphQlPlayground() echo.HandlerFunc {
 		h.ServeHTTP(c.Response(), c.Request())
 		return nil
 	}
+}
+
+func Auth(gs guest.GuestService, ls listing.ListingService, ts auth.TokenService) echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		rt, err := c.Cookie("refresh_token")
+		if err != nil {
+			return c.NoContent(http.StatusForbidden)
+		}
+
+		t, err := gs.RefreshToken(rt.Value)
+		if err != nil {
+			return c.NoContent(http.StatusForbidden)
+		}
+
+		c.SetCookie(&http.Cookie{
+			Name:     "access_token",
+			Value:    t.AccessToken,
+			HttpOnly: true,
+			Expires:  time.Unix(t.AtExpires, 0),
+			Path:     "/",
+			SameSite: http.SameSiteStrictMode,
+		})
+		c.SetCookie(&http.Cookie{
+			Name:     "refresh_token",
+			Value:    t.RefreshToken,
+			HttpOnly: true,
+			Expires:  time.Unix(t.RtExpires, 0),
+			Path:     "/refresh",
+			SameSite: http.SameSiteStrictMode,
+		})
+
+		return c.JSON(http.StatusOK, model.AuthPayload{
+			AccessToken:  t.AccessToken,
+			RefreshToken: t.RefreshToken,
+		})
+	}
+
 }
