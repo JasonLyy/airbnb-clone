@@ -70,12 +70,10 @@ func (a *authService) RefreshAuth(rt string) (*TokenDetails, error) {
 		return nil, fmt.Errorf("Unauthorized")
 	}
 
-	//todo: WE HAVE THIS ISSUE WHERE IN REACT THIS FAILS SO POSSIBLE CONCURRENCY ERROR? WE NEED MUTEX? THIS
-	// WHOLE THING NEEDS MUTEX?
-	// if _, invalidToken := a.client.Get(claims.RefreshUuid).Result(); invalidToken != nil {
-	// 	fmt.Println("Could not verify token claims")
-	// 	return nil, fmt.Errorf("Unauthorized")
-	// }
+	if _, invalidToken := a.client.Get(claims.RefreshUuid).Result(); invalidToken != nil {
+		fmt.Println("Could not verify token claims")
+		return nil, fmt.Errorf("Unauthorized")
+	}
 
 	if delErr := a.DeleteRefresh(claims.RefreshUuid); delErr != nil {
 		fmt.Println("Could not delete refresh token")
@@ -92,6 +90,14 @@ func (a *authService) RefreshAuth(rt string) (*TokenDetails, error) {
 	}
 
 	return newToken, nil
+}
+
+func (a *authService) DeleteRefresh(uuid string) error {
+	deleted, err := a.client.Del(uuid).Result()
+	if err != nil || deleted == 0 {
+		return err
+	}
+	return nil
 }
 
 func (a *authService) InvalidateAuth(auth *AccessDetails) error {
@@ -111,13 +117,5 @@ func (a *authService) InvalidateAuth(auth *AccessDetails) error {
 		return errors.New("something went wrong")
 	}
 
-	return nil
-}
-
-func (a *authService) DeleteRefresh(uuid string) error {
-	deleted, err := a.client.Del(uuid).Result()
-	if err != nil || deleted == 0 {
-		return err
-	}
 	return nil
 }

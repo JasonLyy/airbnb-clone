@@ -41,7 +41,7 @@ func ClearAuthCookie(ctx echo.Context) {
 		Value:    "",
 		HttpOnly: true,
 		Expires:  time.Unix(0, 0),
-		Path:     "/",
+		Path:     "/auth",
 		SameSite: http.SameSiteStrictMode,
 	})
 }

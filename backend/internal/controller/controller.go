@@ -63,7 +63,7 @@ func Auth(gs guest.GuestService, ls listing.ListingService, ts auth.TokenService
 			Value:    t.RefreshToken,
 			HttpOnly: true,
 			Expires:  time.Unix(t.RtExpires, 0),
-			Path:     "/refresh",
+			Path:     "/auth",
 			SameSite: http.SameSiteStrictMode,
 		})
 
