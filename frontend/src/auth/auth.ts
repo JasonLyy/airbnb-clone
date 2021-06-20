@@ -19,7 +19,7 @@ export const initInterceptors = () => {
             }
           )
           .then((v) => {
-            return axios(response);
+            return response;
           })
           .catch((e) => {
             // Unauthorized so re-route to login page.
@@ -43,10 +43,9 @@ export const initInterceptors = () => {
             }
           )
           .then((v) => {
-            return axios(v);
+            return error.response;
           })
           .catch((e) => {
-            console.log("REACHED HERE");
             return Promise.reject(e);
           })
           .finally(initInterceptors);
