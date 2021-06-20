@@ -1,0 +1,5 @@
+{
+    "files.exclude": {
+        "backend/internal/db/fixtures/*.csv": true
+    }
+}
