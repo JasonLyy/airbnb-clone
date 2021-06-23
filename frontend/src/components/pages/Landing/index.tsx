@@ -5,10 +5,12 @@ import SearchBar from "../../SearchBar";
 import UserMenu from "../../UserMenu";
 
 const Landing: React.FC = () => {
+  const authContext = useContext(AppContext);
+
   return (
     <>
       <UserMenu />
-      <SearchBar />
+      {authContext.isLoggedIn && <SearchBar />}
     </>
   );
 };

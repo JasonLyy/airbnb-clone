@@ -5,18 +5,18 @@ export const fetchData = <TData, TVariables>(
   variables?: TVariables
 ): (() => Promise<TData>) => {
   return async () => {
-    // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-    const res = await axios
-      .post(
-        "http://localhost:8001/graphql",
-        JSON.stringify({ query, variables }),
-        {
-          withCredentials: true,
-        }
-      )
-      .catch((e) => {
-        throw new Error(e);
-      });
+    const res = await axios.post(
+      "http://localhost:8001/graphql",
+      JSON.stringify({ query, variables }),
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (res.data.errors) {
+      const { message } = res.data.errors[0] || "Error..";
+      throw new Error(message);
+    }
 
     return res.data.data;
   };

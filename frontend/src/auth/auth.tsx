@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import React, { useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { createContext } from "react";
 import Cookies from "universal-cookie";
 
@@ -14,12 +14,17 @@ export const reauth = () => {
 
 interface AppContextProps {
   isLoggedIn: boolean;
+  setIsLoggedIn: (l: boolean) => void;
 }
 export const AppContext = createContext<AppContextProps>({
   isLoggedIn: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setIsLoggedIn: () => {},
 });
 
 export const AuthInterceptors: React.FC = ({ children }) => {
+  const { setIsLoggedIn } = useContext(AppContext);
+
   const initInterceptors = () => {
     const interceptor = axios.interceptors.response.use(
       async (response) => {
@@ -31,6 +36,7 @@ export const AuthInterceptors: React.FC = ({ children }) => {
           axios.interceptors.response.eject(interceptor);
           const result = reauth()
             .then(() => {
+              setIsLoggedIn(true);
               return response;
             })
             .finally(initInterceptors);
@@ -44,6 +50,7 @@ export const AuthInterceptors: React.FC = ({ children }) => {
           axios.interceptors.response.eject(interceptor);
           const result = reauth()
             .then(() => {
+              setIsLoggedIn(true);
               return error.response;
             })
             .finally(initInterceptors);
@@ -60,7 +67,7 @@ export const AuthInterceptors: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-const isLoggedIn = (): boolean => {
+const hasAuthCookie = (): boolean => {
   const cookies = new Cookies();
   // Date.now() is ms format whereas server returns in seconds format so we multiply by 1000 to add the ms
   return (
@@ -68,18 +75,22 @@ const isLoggedIn = (): boolean => {
   );
 };
 export const AppContextProvider: React.FC = ({ children }) => {
-  console.log("I am re-rendering");
+  const [loggedIn, updateIsloggedIn] = useState<boolean>(hasAuthCookie());
 
-  const loggedIn = isLoggedIn();
   useEffect(() => {
     if (!loggedIn) {
-      reauth();
+      reauth().then((r) => updateIsloggedIn(true));
     }
   }, []);
 
   return (
     <>
-      <AppContext.Provider value={{ isLoggedIn: loggedIn }}>
+      <AppContext.Provider
+        value={{
+          isLoggedIn: loggedIn,
+          setIsLoggedIn: (l: boolean) => updateIsloggedIn(l),
+        }}
+      >
         {children}
       </AppContext.Provider>
     </>

@@ -115,6 +115,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
   const {
+    setError,
     register,
     handleSubmit,
     formState: { errors },
@@ -122,10 +123,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
 
   const [tabState, setTabState] = useState<TabState>(TabState.SIGNUP);
   const { mutate: createGuest } = useCreateGuestMutation({
-    onSuccess: (v: unknown) => console.log(v),
+    onSuccess: () => window.location.reload(),
+    onError: () => {
+      setError("email", {
+        type: "manual",
+        message: "Duplicate email address?",
+      });
+    },
   });
   const { mutate: loginGuest } = useLoginGuestMutation({
-    onSuccess: (v: unknown) => console.log(v),
+    onSuccess: () => window.location.reload(),
+    onError: () => {
+      setError("email", {
+        type: "manual",
+        message: "Invalid email or password?",
+      });
+    },
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
