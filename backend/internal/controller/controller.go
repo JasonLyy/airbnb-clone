@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -62,6 +63,23 @@ func Auth(gs guest.GuestService, ls listing.ListingService, ts auth.TokenService
 			Name:     "refresh_token",
 			Value:    t.RefreshToken,
 			HttpOnly: true,
+			Expires:  time.Unix(t.RtExpires, 0),
+			Path:     "/auth",
+			SameSite: http.SameSiteStrictMode,
+		})
+
+		c.SetCookie(&http.Cookie{
+			Name:     "access_token_exp",
+			Value:    strconv.FormatInt(t.AtExpires, 10),
+			HttpOnly: false,
+			Expires:  time.Unix(t.AtExpires, 0),
+			Path:     "/",
+			SameSite: http.SameSiteStrictMode,
+		})
+		c.SetCookie(&http.Cookie{
+			Name:     "refresh_token_exp",
+			Value:    strconv.FormatInt(t.RtExpires, 10),
+			HttpOnly: false,
 			Expires:  time.Unix(t.RtExpires, 0),
 			Path:     "/auth",
 			SameSite: http.SameSiteStrictMode,
