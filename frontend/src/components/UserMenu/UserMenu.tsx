@@ -4,7 +4,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import styled from "styled-components";
 import { useOutsideAlerter } from "../../hooks/outsideAlerter";
 import MenuDropdown from "./MenuDropdown";
-import LoginModal from "../LoginModal";
+import AuthModal from "./AuthModal";
+import { SelectedAuth } from "./AuthModal/const";
 
 const Navigation = styled.nav`
   display: flex;
@@ -45,7 +46,10 @@ const MenuButton = styled.button`
 
 const UserMenu: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
+  const [selectedAuth, setSelectedAuth] = useState<SelectedAuth>(
+    SelectedAuth.SIGNIN
+  );
+  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -63,15 +67,22 @@ const UserMenu: React.FC = () => {
 
         {menuOpen && (
           <MenuDropdown
-            closeMenu={() => setMenuOpen(false)}
-            onLoginClick={() => setLoginModalOpen(true)}
+            onSignupClick={() => {
+              setAuthModalOpen(true);
+              setSelectedAuth(SelectedAuth.SIGNUP);
+            }}
+            onLoginClick={() => {
+              setAuthModalOpen(true);
+              setSelectedAuth(SelectedAuth.SIGNIN);
+            }}
           />
         )}
 
         {
-          <LoginModal
-            open={loginModalOpen}
-            onClose={() => setLoginModalOpen(false)}
+          <AuthModal
+            selectedAuth={selectedAuth}
+            open={authModalOpen}
+            onClose={() => setAuthModalOpen(false)}
           />
         }
       </Menu>

@@ -1,4 +1,4 @@
-import * as Types from '../../../types/types.generated';
+import * as Types from '../../../../types/types.generated';
 
 import { useMutation, UseMutationOptions } from 'react-query';
 import { fetchData } from 'App/fetcher';

@@ -1,23 +1,29 @@
 import React from "react";
 import Modal from "@material-ui/core/Modal";
-import LoginForm from "./LoginForm";
+import AuthForm from "./AuthForm";
+import { SelectedAuth } from "./const";
 
-interface LoginModalProps {
+interface AuthModalProps {
   open: boolean;
   onClose: () => void;
+  selectedAuth: SelectedAuth;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({
+  selectedAuth,
+  open,
+  onClose,
+}) => {
   return (
     <>
       <Modal open={open} onClose={onClose}>
         {/* todo: hack to fix this error. look into later https://github.com/mbrn/material-table/issues/677 */}
         <span>
-          <LoginForm onCloseClick={onClose} />
+          <AuthForm onCloseClick={onClose} selectedAuth={selectedAuth} />
         </span>
       </Modal>
     </>
   );
 };
 
-export default LoginModal;
+export default AuthModal;

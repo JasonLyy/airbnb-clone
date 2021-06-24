@@ -29,23 +29,18 @@ const MenuItem = styled.a`
 `;
 
 interface MenuDropdownProps {
-  closeMenu: () => void;
+  onSignupClick: () => void;
   onLoginClick: () => void;
 }
 const MenuDropdown: React.FC<MenuDropdownProps> = ({
-  closeMenu,
+  onSignupClick,
   onLoginClick,
 }) => {
-  const renderLoginModal = () => {
-    closeMenu();
-    onLoginClick();
-  };
-
   return (
     <>
       <Menu>
-        <MenuItem onClick={() => renderLoginModal()}>Sign Up</MenuItem>
-        <MenuItem onClick={() => renderLoginModal()}>Login</MenuItem>
+        <MenuItem onClick={onSignupClick}>Sign Up</MenuItem>
+        <MenuItem onClick={onLoginClick}>Login</MenuItem>
       </Menu>
     </>
   );

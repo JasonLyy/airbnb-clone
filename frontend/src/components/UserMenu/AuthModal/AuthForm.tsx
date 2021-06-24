@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Close from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
-import HorizontalDivider from "../pages/SearchHomes/Results/ListingCard/HorizontalDivider";
-import LoginTabs, { TabState } from "./LoginTabs";
+import HorizontalDivider from "../../pages/SearchHomes/Results/ListingCard/HorizontalDivider";
+import AuthTabs from "./AuthTabs";
 import {
   useCreateGuestMutation,
   useLoginGuestMutation,
 } from "./__generated__/mutations.generated";
+import { SelectedAuth } from "./const";
 
 const Container = styled.div`
   width: 100%;
@@ -109,11 +110,12 @@ type LoginInputs = {
   password: string;
 };
 
-interface LoginFormProps {
+interface AuthFormProps {
   onCloseClick: () => void;
+  selectedAuth: SelectedAuth;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
   const {
     setError,
     register,
@@ -121,7 +123,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
     formState: { errors },
   } = useForm<LoginInputs>();
 
-  const [tabState, setTabState] = useState<TabState>(TabState.SIGNUP);
+  const [selectedAuthTab, setSelectedAuth] = useState<SelectedAuth>(
+    selectedAuth
+  );
   const { mutate: createGuest } = useCreateGuestMutation({
     onSuccess: () => window.location.reload(),
     onError: () => {
@@ -142,8 +146,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    switch (tabState) {
-      case TabState.SIGNUP:
+    switch (selectedAuth) {
+      case SelectedAuth.SIGNUP:
         createGuest({
           input: {
             email: data.email,
@@ -151,7 +155,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
           },
         });
         break;
-      case TabState.SIGNIN:
+      case SelectedAuth.SIGNIN:
         loginGuest({
           input: {
             email: data.email,
@@ -175,9 +179,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
 
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormHeader>Welcome to Airbnb</FormHeader>
-        <LoginTabs
-          tabState={tabState}
-          onChange={(_, newTabState: TabState) => setTabState(newTabState)}
+        <AuthTabs
+          selectedAuth={selectedAuthTab}
+          onChange={(_, newAuthState: SelectedAuth) =>
+            setSelectedAuth(newAuthState)
+          }
         />
 
         <Input
@@ -214,4 +220,4 @@ const LoginForm: React.FC<LoginFormProps> = ({ onCloseClick }) => {
   );
 };
 
-export default LoginForm;
+export default AuthForm;
