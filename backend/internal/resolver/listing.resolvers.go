@@ -31,7 +31,7 @@ func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*floa
 }
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
-	if user := middleware.ForContext(ctx); user == nil {
+	if user := middleware.ContextUser(ctx); user == nil {
 		return &model.ListingConnection{}, &UnauthorizedError{}
 
 	}

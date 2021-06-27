@@ -98,7 +98,6 @@ export type Mutation = {
   createGuest: AuthPayload;
   loginGuest: AuthPayload;
   logoutGuest: LogoutPayload;
-  refreshToken: AuthPayload;
 };
 
 
@@ -109,16 +108,6 @@ export type MutationCreateGuestArgs = {
 
 export type MutationLoginGuestArgs = {
   input: CredentialsInput;
-};
-
-
-export type MutationLogoutGuestArgs = {
-  accessToken: Scalars['String'];
-};
-
-
-export type MutationRefreshTokenArgs = {
-  refreshToken: Scalars['String'];
 };
 
 export type Node = {

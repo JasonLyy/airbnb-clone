@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
+	"github.com/JasonLyy/airbnb-clone/backend/internal/middleware"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 )
 
@@ -39,8 +40,13 @@ func (r *mutationResolver) LoginGuest(ctx context.Context, input model.Credentia
 	}, nil
 }
 
-func (r *mutationResolver) LogoutGuest(ctx context.Context, accessToken string) (*model.LogoutPayload, error) {
-	l, err := r.guestService.LogoutGuest(accessToken)
+func (r *mutationResolver) LogoutGuest(ctx context.Context) (*model.LogoutPayload, error) {
+	at := middleware.ContextAccessToken(ctx)
+	if at == nil {
+		return &model.LogoutPayload{}, &UnauthorizedError{}
+	}
+
+	l, err := r.guestService.LogoutGuest(*at)
 	if err != nil {
 		return &model.LogoutPayload{}, nil
 	}
@@ -48,20 +54,6 @@ func (r *mutationResolver) LogoutGuest(ctx context.Context, accessToken string) 
 	ClearAuthCookie(r.echoCtx)
 
 	return l, nil
-}
-
-func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken *string) (*model.AuthPayload, error) {
-	t, err := r.guestService.RefreshToken(*refreshToken)
-	if err != nil {
-		return &model.AuthPayload{}, nil
-	}
-
-	SetAuthCookie(r.echoCtx, t)
-
-	return &model.AuthPayload{
-		AccessToken:  t.AccessToken,
-		RefreshToken: t.RefreshToken,
-	}, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

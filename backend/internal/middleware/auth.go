@@ -11,8 +11,12 @@ import (
 )
 
 var userCtxKey = &userContextKey{"user"}
+var accessTokenCtxKey = &accessTokenContextKey{"access_token"}
 
 type userContextKey struct {
+	name string
+}
+type accessTokenContextKey struct {
 	name string
 }
 
@@ -46,8 +50,10 @@ func Auth(a auth.AuthService, t auth.TokenService, g guest.GuestService) func(ec
 				return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
 			}
 
-			ctx := context.WithValue(c.Request().Context(), userCtxKey, guest)
-			req := c.Request().WithContext(ctx)
+			ctxWithUser := context.WithValue(c.Request().Context(), userCtxKey, guest)
+			ctxWithUserAndAt := context.WithValue(ctxWithUser, accessTokenCtxKey, &tokenString)
+
+			req := c.Request().WithContext(ctxWithUserAndAt)
 			c.SetRequest(req)
 
 			return next(c)
@@ -55,7 +61,12 @@ func Auth(a auth.AuthService, t auth.TokenService, g guest.GuestService) func(ec
 	}
 }
 
-func ForContext(ctx context.Context) *model.Guest {
+func ContextUser(ctx context.Context) *model.Guest {
 	raw, _ := ctx.Value(userCtxKey).(*model.Guest)
+	return raw
+}
+
+func ContextAccessToken(ctx context.Context) *string {
+	raw, _ := ctx.Value(accessTokenCtxKey).(*string)
 	return raw
 }

@@ -49,10 +49,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AuthPayload struct {
-		AccessToken     func(childComplexity int) int
-		AccessTokenExp  func(childComplexity int) int
-		RefreshToken    func(childComplexity int) int
-		RefreshTokenExp func(childComplexity int) int
+		AccessToken  func(childComplexity int) int
+		RefreshToken func(childComplexity int) int
 	}
 
 	Guest struct {
@@ -101,10 +99,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateGuest  func(childComplexity int, input model.CredentialsInput) int
-		LoginGuest   func(childComplexity int, input model.CredentialsInput) int
-		LogoutGuest  func(childComplexity int, accessToken string) int
-		RefreshToken func(childComplexity int, refreshToken *string) int
+		CreateGuest func(childComplexity int, input model.CredentialsInput) int
+		LoginGuest  func(childComplexity int, input model.CredentialsInput) int
+		LogoutGuest func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -126,8 +123,7 @@ type ListingResolver interface {
 type MutationResolver interface {
 	CreateGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
 	LoginGuest(ctx context.Context, input model.CredentialsInput) (*model.AuthPayload, error)
-	LogoutGuest(ctx context.Context, accessToken string) (*model.LogoutPayload, error)
-	RefreshToken(ctx context.Context, refreshToken *string) (*model.AuthPayload, error)
+	LogoutGuest(ctx context.Context) (*model.LogoutPayload, error)
 }
 type QueryResolver interface {
 	Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
@@ -155,26 +151,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AuthPayload.AccessToken(childComplexity), true
 
-	case "AuthPayload.accessTokenExp":
-		if e.complexity.AuthPayload.AccessTokenExp == nil {
-			break
-		}
-
-		return e.complexity.AuthPayload.AccessTokenExp(childComplexity), true
-
 	case "AuthPayload.refreshToken":
 		if e.complexity.AuthPayload.RefreshToken == nil {
 			break
 		}
 
 		return e.complexity.AuthPayload.RefreshToken(childComplexity), true
-
-	case "AuthPayload.refreshTokenExp":
-		if e.complexity.AuthPayload.RefreshTokenExp == nil {
-			break
-		}
-
-		return e.complexity.AuthPayload.RefreshTokenExp(childComplexity), true
 
 	case "Guest.email":
 		if e.complexity.Guest.Email == nil {
@@ -415,24 +397,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_logoutGuest_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.LogoutGuest(childComplexity, args["accessToken"].(string)), true
-
-	case "Mutation.refreshToken":
-		if e.complexity.Mutation.RefreshToken == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_refreshToken_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RefreshToken(childComplexity, args["refreshToken"].(*string)), true
+		return e.complexity.Mutation.LogoutGuest(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -545,9 +510,7 @@ var sources = []*ast.Source{
 
 type AuthPayload {
   accessToken: String!
-  accessTokenExp: Int!
   refreshToken: String!
-  refreshTokenExp: Int!
 }
 
 type LogoutPayload {
@@ -562,8 +525,7 @@ input CredentialsInput {
 type Mutation {
   createGuest(input: CredentialsInput!): AuthPayload!
   loginGuest(input: CredentialsInput!): AuthPayload!
-  logoutGuest(accessToken: String!): LogoutPayload!
-  refreshToken(refreshToken: String): AuthPayload!
+  logoutGuest: LogoutPayload!
 }
 `, BuiltIn: false},
 	{Name: "internal/schema/listing.graphqls", Input: `type Listing implements Node {
@@ -681,36 +643,6 @@ func (ec *executionContext) field_Mutation_loginGuest_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_logoutGuest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["accessToken"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accessToken"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["accessToken"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["refreshToken"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["refreshToken"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -823,41 +755,6 @@ func (ec *executionContext) _AuthPayload_accessToken(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AuthPayload_accessTokenExp(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AuthPayload",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessTokenExp, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _AuthPayload_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -891,41 +788,6 @@ func (ec *executionContext) _AuthPayload_refreshToken(ctx context.Context, field
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AuthPayload_refreshTokenExp(ctx context.Context, field graphql.CollectedField, obj *model.AuthPayload) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AuthPayload",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshTokenExp, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Guest_id(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
@@ -2021,16 +1883,9 @@ func (ec *executionContext) _Mutation_logoutGuest(ctx context.Context, field gra
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_logoutGuest_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LogoutGuest(rctx, args["accessToken"].(string))
+		return ec.resolvers.Mutation().LogoutGuest(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2045,48 +1900,6 @@ func (ec *executionContext) _Mutation_logoutGuest(ctx context.Context, field gra
 	res := resTmp.(*model.LogoutPayload)
 	fc.Result = res
 	return ec.marshalNLogoutPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐLogoutPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_refreshToken_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RefreshToken(rctx, args["refreshToken"].(*string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.AuthPayload)
-	fc.Result = res
-	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐAuthPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
@@ -3617,18 +3430,8 @@ func (ec *executionContext) _AuthPayload(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "accessTokenExp":
-			out.Values[i] = ec._AuthPayload_accessTokenExp(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "refreshToken":
 			out.Values[i] = ec._AuthPayload_refreshToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshTokenExp":
-			out.Values[i] = ec._AuthPayload_refreshTokenExp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3891,11 +3694,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "logoutGuest":
 			out.Values[i] = ec._Mutation_logoutGuest(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshToken":
-			out.Values[i] = ec._Mutation_refreshToken(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

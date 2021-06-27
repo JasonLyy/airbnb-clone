@@ -146,7 +146,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    switch (selectedAuth) {
+    switch (selectedAuthTab) {
       case SelectedAuth.SIGNUP:
         createGuest({
           input: {
@@ -156,6 +156,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
         });
         break;
       case SelectedAuth.SIGNIN:
+        console.log("I AM SELECTEd");
         loginGuest({
           input: {
             email: data.email,
@@ -181,9 +182,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
         <FormHeader>Welcome to Airbnb</FormHeader>
         <AuthTabs
           selectedAuth={selectedAuthTab}
-          onChange={(_, newAuthState: SelectedAuth) =>
-            setSelectedAuth(newAuthState)
-          }
+          onChange={(_, newAuthState: SelectedAuth) => {
+            console.log(newAuthState);
+            setSelectedAuth(newAuthState);
+          }}
         />
 
         <Input

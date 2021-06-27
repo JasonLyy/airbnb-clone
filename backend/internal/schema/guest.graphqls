@@ -20,6 +20,5 @@ input CredentialsInput {
 type Mutation {
   createGuest(input: CredentialsInput!): AuthPayload!
   loginGuest(input: CredentialsInput!): AuthPayload!
-  logoutGuest(accessToken: String!): LogoutPayload!
-  refreshToken(refreshToken: String!): AuthPayload!
+  logoutGuest: LogoutPayload!
 }

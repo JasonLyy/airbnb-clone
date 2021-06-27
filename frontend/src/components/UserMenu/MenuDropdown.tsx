@@ -1,5 +1,9 @@
+import { AppContext } from "App/auth/auth";
 import React from "react";
+import { useContext } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { useLogoutGuestMutation } from "./__generated__/mutations.generated";
 
 const Menu = styled.div`
   display: flex;
@@ -36,14 +40,35 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
   onSignupClick,
   onLoginClick,
 }) => {
-  return (
-    <>
-      <Menu>
-        <MenuItem onClick={onSignupClick}>Sign Up</MenuItem>
-        <MenuItem onClick={onLoginClick}>Login</MenuItem>
-      </Menu>
-    </>
+  const history = useHistory();
+
+  const { isLoggedIn } = useContext(AppContext);
+  const { mutate: logoutGuest } = useLogoutGuestMutation({
+    onSuccess: () => {
+      history.push("/");
+      window.location.reload();
+    },
+  });
+
+  const logout = () => {
+    logoutGuest({});
+  };
+
+  const unAuthedMenu = (
+    <Menu>
+      <MenuItem onClick={onSignupClick}>Sign Up</MenuItem>
+      <MenuItem onClick={onLoginClick}>Login</MenuItem>
+    </Menu>
   );
+
+  const authedMenu = (
+    <Menu>
+      <MenuItem>Insert Relevant Item That Requires Auth Here</MenuItem>
+      <MenuItem onClick={logout}>Logout</MenuItem>
+    </Menu>
+  );
+
+  return isLoggedIn ? authedMenu : unAuthedMenu;
 };
 
 export default MenuDropdown;
