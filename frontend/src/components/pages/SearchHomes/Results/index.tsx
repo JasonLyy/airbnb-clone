@@ -1,8 +1,11 @@
+import { ListingsInput } from "App/types/types.generated";
 import React from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { ListingInfoFieldsFragment } from "../__generated__/queries.generated";
 import ListingCard from "./ListingCard";
 import HorizontalDivider from "./ListingCard/HorizontalDivider";
+import queryString from "query-string";
 
 const ResultsContainer = styled.div`
   display: flex;
@@ -32,11 +35,6 @@ const Subheading = styled.div`
 const Footer = styled.div`
   margin-top: auto;
 `;
-
-interface ResultsProps {
-  listings: ListingInfoFieldsFragment[];
-  totalResults: number;
-}
 
 //todo: review how we handle nullable options. It could be that these fields aint nullable but ceebs fixing right now.
 const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
@@ -76,11 +74,20 @@ const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
     );
   });
 
+interface ResultsProps {
+  listings: ListingInfoFieldsFragment[];
+  totalResults: number;
+  listingsInput: ListingsInput;
+}
 const Results: React.FC<ResultsProps> = ({
   listings,
   totalResults,
+  listingsInput,
   children,
 }) => {
+  const history = useHistory();
+  const { search, pathname } = useLocation<ListingsInput>();
+
   return (
     <ResultsContainer>
       <Heading>Places to stay near you</Heading>

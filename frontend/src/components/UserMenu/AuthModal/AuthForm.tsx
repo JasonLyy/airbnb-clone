@@ -156,7 +156,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
         });
         break;
       case SelectedAuth.SIGNIN:
-        console.log("I AM SELECTEd");
         loginGuest({
           input: {
             email: data.email,
@@ -183,7 +182,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
         <AuthTabs
           selectedAuth={selectedAuthTab}
           onChange={(_, newAuthState: SelectedAuth) => {
-            console.log(newAuthState);
             setSelectedAuth(newAuthState);
           }}
         />

@@ -38,7 +38,6 @@ type LocationSearchProps = {
 };
 
 const LocationSearch: React.FC<LocationSearchProps> = ({ inputText }) => {
-  // console.log("Used later: ", inputText);
   return (
     <>
       <SearchResultPreview>

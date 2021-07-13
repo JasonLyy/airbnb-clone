@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Results from "./Results";
 import { useGetListingsQuery } from "./__generated__/queries.generated";
-import { useGetSearchHomesParam } from "./useSearchHomesParams";
+import { useSearchListingsParam } from "./useSearchParams";
 import Pagination from "../../shared/Pagination";
 
 const SearchHomeContainer = styled.div`
@@ -34,10 +34,12 @@ const SearchHomes: React.FC = () => {
     searchQueryParams,
     onPreviousClicked,
     onNextClicked,
-  ] = useGetSearchHomesParam();
+  ] = useSearchListingsParam();
 
   const { isLoading, data } = useGetListingsQuery(searchQueryParams);
   if (!data || isLoading) return <div>loading</div>;
+
+  const listingsInput = searchQueryParams.input;
 
   const {
     listings: {
@@ -52,7 +54,11 @@ const SearchHomes: React.FC = () => {
     <SearchHomeContainer>
       <SearchHomesHeader>Search Header</SearchHomesHeader>
       <SearchHomesBody>
-        <Results listings={listings} totalResults={totalResults}>
+        <Results
+          listings={listings}
+          totalResults={totalResults}
+          listingsInput={listingsInput}
+        >
           <Pagination
             onPreviousClicked={() => onPreviousClicked()}
             onNextClicked={() => onNextClicked(hasPreviousPage, endCursor)}
