@@ -143,7 +143,9 @@ const buildAmenitiesText = (amenities: string[]) => (
   </Amenities>
 );
 
-const ListingCard: React.FC<ListingCardProps> = ({
+const ListingCard: React.FC<
+  ListingCardProps & React.HTMLAttributes<HTMLDivElement>
+> = ({
   subheading,
   heading,
   guests,
@@ -156,9 +158,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
   reviews,
   ratings,
   pictureUrl,
+  onClick,
 }) => {
   return (
-    <CardContainer>
+    <CardContainer onClick={onClick} key={heading}>
       <ListingImage url={pictureUrl} />
       <Description>
         <Subheading>{subheading}</Subheading>

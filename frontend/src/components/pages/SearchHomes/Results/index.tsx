@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { ListingInfoFieldsFragment } from "../__generated__/queries.generated";
 import ListingCard from "./ListingCard";
 import HorizontalDivider from "./ListingCard/HorizontalDivider";
-import queryString from "query-string";
 
 const ResultsContainer = styled.div`
   display: flex;
@@ -32,29 +31,53 @@ const Subheading = styled.div`
   color: ${(p) => p.theme.colors.primaryComponent};
 `;
 
+const ListingsContainer = styled.div``;
+
 const Footer = styled.div`
   margin-top: auto;
 `;
 
-//todo: review how we handle nullable options. It could be that these fields aint nullable but ceebs fixing right now.
-const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
-  listings.map((listings) => {
-    const {
-      id,
-      name,
-      accommodates,
-      beds,
-      bedrooms,
-      bathrooms,
-      amenities,
-      price,
-      reviews,
-      rating,
-      pictureUrl,
-    } = listings;
+interface ResultsProps {
+  listings: ListingInfoFieldsFragment[];
+  totalResults: number;
+  listingsInput: ListingsInput;
+}
+const Results: React.FC<ResultsProps> = ({
+  listings,
+  totalResults,
+  children,
+}) => {
+  const history = useHistory();
+  const { search } = useLocation<ListingsInput>();
 
-    return (
-      <>
+  const openListing = (id: string) => {
+    const searchParams = new URLSearchParams(search);
+    searchParams.delete("previous");
+    searchParams.delete("next");
+    history.push({
+      pathname: `/listing/${id}`,
+      search: searchParams.toString(),
+    });
+  };
+
+  //todo: review how we handle nullable options. It could be that these fields aint nullable but ceebs fixing right now.
+  const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
+    listings.map((listings) => {
+      const {
+        id,
+        name,
+        accommodates,
+        beds,
+        bedrooms,
+        bathrooms,
+        amenities,
+        price,
+        reviews,
+        rating,
+        pictureUrl,
+      } = listings;
+
+      return (
         <ListingCard
           key={id}
           subheading={""}
@@ -69,30 +92,17 @@ const createListingCards = (listings: ListingInfoFieldsFragment[]) =>
           reviews={reviews ?? -1}
           ratings={rating ?? -1}
           pictureUrl={pictureUrl ?? ""}
+          onClick={() => openListing(id)}
         />
-      </>
-    );
-  });
-
-interface ResultsProps {
-  listings: ListingInfoFieldsFragment[];
-  totalResults: number;
-  listingsInput: ListingsInput;
-}
-const Results: React.FC<ResultsProps> = ({
-  listings,
-  totalResults,
-  listingsInput,
-  children,
-}) => {
-  const history = useHistory();
-  const { search, pathname } = useLocation<ListingsInput>();
+      );
+    });
 
   return (
     <ResultsContainer>
       <Heading>Places to stay near you</Heading>
       <Subheading>Explore all {totalResults} stays</Subheading>
-      {createListingCards(listings)}
+      <ListingsContainer>{createListingCards(listings)}</ListingsContainer>
+
       <Footer>
         <HorizontalDivider />
         {children}
