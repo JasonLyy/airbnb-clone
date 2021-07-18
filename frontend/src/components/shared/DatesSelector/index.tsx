@@ -64,7 +64,7 @@ interface DatesSelectorProps {
   daySize?: number;
 }
 
-const DatesSelector: React.FC<DatesSelectorProps> = ({
+const DatesSelector: React.VFC<DatesSelectorProps> = ({
   onDatesChange,
   onFocusChange,
   focusedInput,

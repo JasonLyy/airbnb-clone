@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import Close from "@material-ui/icons/Close";
-import TextField from "@material-ui/core/TextField";
-import HorizontalDivider from "../../pages/SearchHomes/Results/ListingCard/HorizontalDivider";
+import HorizontalDivider from "../../shared/HorizontalDivider";
 import AuthTabs from "./AuthTabs";
 import {
   useCreateGuestMutation,
   useLoginGuestMutation,
 } from "./__generated__/mutations.generated";
 import { SelectedAuth } from "./const";
+import ClearableTextField from "App/components/shared/ClearableTextField";
 
 const Container = styled.div`
   width: 100%;
@@ -77,21 +77,6 @@ const FormHeader = styled.h2`
   margin: 0px;
 `;
 
-const Input = styled(TextField)`
-  &&& {
-    margin-top: 10px;
-    font-family: inherit;
-
-    .Mui-focused fieldset {
-      border-color: ${(p) => p.theme.colors.primaryComponent};
-    }
-
-    & label.Mui-focused {
-      color: ${(p) => p.theme.colors.secondaryComponent};
-    }
-  }
-`;
-
 const Submit = styled.input`
   cursor: pointer;
   margin-top: 20px;
@@ -118,9 +103,10 @@ interface AuthFormProps {
 const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
   const {
     setError,
-    register,
     handleSubmit,
+    setValue,
     formState: { errors },
+    control,
   } = useForm<LoginInputs>();
 
   const [selectedAuthTab, setSelectedAuth] = useState<SelectedAuth>(
@@ -186,32 +172,55 @@ const AuthForm: React.FC<AuthFormProps> = ({ onCloseClick, selectedAuth }) => {
           }}
         />
 
-        <Input
-          label="Email"
-          variant="outlined"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register("email", {
+        <Controller
+          name="email"
+          control={control}
+          rules={{
             required: "You must specify an email address",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: "invalid email address",
             },
-          })}
+          }}
+          render={({ field }) => (
+            <ClearableTextField
+              label="Email"
+              variant="outlined"
+              error={!!errors.email}
+              helperText={errors.email?.message}
+              inputRef={field.ref}
+              onChange={field.onChange}
+              onClear={() => setValue("email", "")}
+              showClearButton
+              value={field.value || ""}
+            />
+          )}
         />
-        <Input
-          label="Password"
-          variant="outlined"
-          type="password"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register("password", {
+
+        <Controller
+          name="password"
+          control={control}
+          rules={{
             required: "You must specify a pasword",
             minLength: {
               value: 8,
               message: "Password must have at least 8 characters",
             },
-          })}
+          }}
+          render={({ field }) => (
+            <ClearableTextField
+              label="Password"
+              variant="outlined"
+              type="password"
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              inputRef={field.ref}
+              onChange={field.onChange}
+              onClear={() => setValue("password", "")}
+              showClearButton
+              value={field.value || ""}
+            />
+          )}
         />
 
         <Submit type="submit" value="Continue" />

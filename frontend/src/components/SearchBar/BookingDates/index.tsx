@@ -8,7 +8,7 @@ import DatesSelector, {
   OnFocusChange,
   START_DATE,
   END_DATE,
-} from "./DatesSelector";
+} from "../../shared/DatesSelector";
 import moment, { Moment } from "moment";
 import type { FocusedInputShape } from "react-dates";
 import SearchInput from "../common/SearchInput";

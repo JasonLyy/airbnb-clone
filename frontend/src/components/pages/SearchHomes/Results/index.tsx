@@ -4,7 +4,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { ListingInfoFieldsFragment } from "../__generated__/queries.generated";
 import ListingCard from "./ListingCard";
-import HorizontalDivider from "./ListingCard/HorizontalDivider";
+import HorizontalDivider from "../../../shared/HorizontalDivider";
 
 const ResultsContainer = styled.div`
   display: flex;

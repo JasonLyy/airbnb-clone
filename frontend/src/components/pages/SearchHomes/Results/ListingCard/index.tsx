@@ -1,6 +1,7 @@
+import PricingSummary from "App/components/shared/PricingSummary";
+import ReviewSummary from "App/components/shared/ReviewSummary";
 import React from "react";
 import styled, { css } from "styled-components";
-import Star from "../../../../../assets/review-star.svg";
 import ListingImage from "./ListingImage";
 
 const CardContainer = styled.div`
@@ -52,46 +53,12 @@ const Amenities = styled.div`
   margin-top: 4px;
 `;
 
-const ReviewStar = styled.svg`
-  width: 14px;
-  height: 14px;
-  color: ${(p) => p.theme.colors.primary};
-`;
-
-const Review = styled.div`
-  display: block;
-`;
-
-const Rating = styled.span`
-  font-weight: 600;
-  margin-left: 4px;
-`;
-
-const ReviewCount = styled.span`
-  margin-left: 4px;
-  color: ${(p) => p.theme.colors.secondaryComponent};
-  font-size: 14px;
-`;
-
 const BottomContainer = styled.div`
   display: flex;
   position: absolute;
   bottom: 0;
   width: 100%;
   justify-content: space-between;
-`;
-
-const PricingContainer = styled.div`
-  cursor: text;
-`;
-
-const PricingText = styled.span`
-  font-weight: 1000;
-  font-size: 18px;
-`;
-
-const PricingDurationText = styled.span`
-  font-size: 18px;
 `;
 
 interface ListingCardProps {
@@ -108,10 +75,6 @@ interface ListingCardProps {
   ratings: number;
   pictureUrl: string;
 }
-
-const currencyFormat = (num: number) => {
-  return "$" + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-};
 
 const buildListingCapcityText = ({
   guests,
@@ -175,18 +138,8 @@ const ListingCard: React.FC<
         })}
         {buildAmenitiesText(amenities)}
         <BottomContainer>
-          <Review>
-            <ReviewStar as={Star} />
-            <Rating>{ratings.toFixed(2)}</Rating>
-            <ReviewCount>({reviews} reviews)</ReviewCount>
-          </Review>
-          <PricingContainer>
-            <PricingText>{currencyFormat(price * nights)} AUD</PricingText>
-            <PricingDurationText>
-              {" "}
-              / ${nights > 1 ? "total" : "night"}{" "}
-            </PricingDurationText>
-          </PricingContainer>
+          <ReviewSummary ratings={ratings} reviews={reviews} />
+          <PricingSummary price={price} nights={nights} />
         </BottomContainer>
       </Description>
     </CardContainer>
