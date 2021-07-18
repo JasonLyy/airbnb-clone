@@ -33,11 +33,17 @@ const ClearableTextField: React.FC<ClearableTextFieldProps> = ({
   return (
     <Input
       {...props}
-      onFocus={() => setIsFocused(true)}
+      onFocus={(e) => {
+        props.onFocus && props.onFocus(e);
+        setIsFocused(true);
+      }}
+      onBlurCapture={() => setIsFocused(false)}
       InputProps={{
+        ...props.InputProps,
         endAdornment: (
           <>
-            {showClearButton && props.value && isFocused && (
+            {((showClearButton && !!props.value) ||
+              (showClearButton && isFocused)) && (
               <IconButton onClick={onClear}>
                 <CancelRoundedIcon />
               </IconButton>
@@ -45,7 +51,6 @@ const ClearableTextField: React.FC<ClearableTextFieldProps> = ({
           </>
         ),
       }}
-      // value={value}
     />
   );
 };

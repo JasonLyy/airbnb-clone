@@ -6,6 +6,10 @@ import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 
 const DatesSelectorContainer = styled.div`
+  .DayPicker {
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 1px 12px;
+  }
+
   .DayPicker__horizontal {
     margin: auto;
     font-family: "Airbnb Cereal App Light", Roboto, "Helvetica Neue", sans-serif,
