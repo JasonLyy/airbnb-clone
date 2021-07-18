@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
@@ -19,21 +19,30 @@ const Input = styled(TextField)`
   }
 `;
 type ClearableTextFieldProps = TextFieldProps & {
-  onClear: () => void;
+  onClear?: () => void;
+  showClearButton?: boolean;
 };
 
 const ClearableTextField: React.FC<ClearableTextFieldProps> = ({
   onClear,
+  showClearButton = false,
   ...props
 }) => {
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+
   return (
     <Input
       {...props}
+      onFocus={() => setIsFocused(true)}
       InputProps={{
         endAdornment: (
-          <IconButton onClick={onClear}>
-            <CancelRoundedIcon />
-          </IconButton>
+          <>
+            {showClearButton && props.value && isFocused && (
+              <IconButton onClick={onClear}>
+                <CancelRoundedIcon />
+              </IconButton>
+            )}
+          </>
         ),
       }}
       // value={value}
