@@ -22,7 +22,13 @@ const Body = styled.div`
 `;
 
 const BodyContainer = styled.div`
+  display: relative;
   width: 60%;
+`;
+
+const BodyInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Footer = styled.div`
@@ -30,6 +36,9 @@ const Footer = styled.div`
   height: 550px;
 `;
 
+interface ListingProps {
+  photosUrl: string[];
+}
 const Listing: React.VFC = () => {
   const x = useGetListingParam();
   console.log(x);
@@ -55,7 +64,18 @@ const Listing: React.VFC = () => {
               "https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440",
             ]}
           />
-          <ReservationCheckout />
+
+          <BodyInfo>
+            <div>
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+              https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440https://a0.muscache.com/im/pictures/cd1a7261-def7-4055-b85a-d8c053b3ab8f.jpg?im_w=1440
+            </div>
+            <ReservationCheckout />
+          </BodyInfo>
         </BodyContainer>
       </Body>
       <Footer>Footer</Footer>

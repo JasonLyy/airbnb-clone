@@ -91,12 +91,10 @@ const guestsSelectorReducer = (
 };
 
 const useGuestsSelector = (
-  maxGuests: GuestsState
+  maxGuests: GuestsState,
+  initial: GuestsState = initialGuestsState
 ): [GuestsState, Dispatch<ReducerAction>, (action: Actions) => boolean] => {
-  const [state, dispatch] = useReducer(
-    guestsSelectorReducer,
-    initialGuestsState
-  );
+  const [state, dispatch] = useReducer(guestsSelectorReducer, initial);
 
   // todo: ughhhh gave up but lets add some type safety to check the actions...
   // possibly don't go down Enum route?

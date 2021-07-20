@@ -82,7 +82,11 @@ const GuestTypeQuantity: React.FC<GuestTypeQuantityProps> = ({
       <div>
         <GuestTypeRowQuantity>
           <GuestTypeRowQuantityItem>
-            <QuantityButton onClick={decrement} disabled={reachedMin}>
+            <QuantityButton
+              type="button"
+              onClick={decrement}
+              disabled={reachedMin}
+            >
               <DecrementIcon />
             </QuantityButton>
           </GuestTypeRowQuantityItem>
@@ -90,7 +94,11 @@ const GuestTypeQuantity: React.FC<GuestTypeQuantityProps> = ({
           <GuestTypeRowQuantityItem>{value}</GuestTypeRowQuantityItem>
 
           <GuestTypeRowQuantityItem>
-            <QuantityButton onClick={increment} disabled={reachedMax}>
+            <QuantityButton
+              type="button"
+              onClick={increment}
+              disabled={reachedMax}
+            >
               <IncrementIcon />
             </QuantityButton>
           </GuestTypeRowQuantityItem>

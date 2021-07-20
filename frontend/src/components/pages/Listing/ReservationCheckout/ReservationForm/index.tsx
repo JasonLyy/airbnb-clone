@@ -12,6 +12,10 @@ import React, { useRef, useState } from "react";
 import { FocusedInputShape } from "react-dates";
 import { useOutsideAlerter } from "../../../../../hooks/outsideAlerter";
 import styled from "styled-components";
+import useGuestsSelector, {
+  Actions,
+} from "App/components/shared/GuestsSelectorForm/useGuestsSelector";
+import GuestsSelector from "./GuestsSelector";
 
 const Form = styled.form`
   display: flex;
@@ -31,6 +35,20 @@ const ReservationDatesContainer = styled.div`
   z-index: 9;
 `;
 
+const ReserveButton = styled.button`
+  background-color: ${(p) => p.theme.colors.primary};
+  color: ${(p) => p.theme.colors.primaryTitleText};
+  font-size: 24px;
+  border: 0;
+  margin-top: 16px;
+  padding: 8px;
+  border-radius: 8px;
+
+  :hover {
+    cursor: pointer;
+  }
+`;
+
 interface ReservationFormProps {
   adults?: number;
   infants?: number;
@@ -44,6 +62,17 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
     setFocusedCalendarDate,
   ] = useState<FocusedInputShape | null>(START_DATE);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isGuestsSelectorOpen, setIsGuestsSelectorOpen] = useState(false);
+
+  const [
+    guests,
+    dispatchGuestsSelectorAction,
+    canUpdateGuestState,
+  ] = useGuestsSelector({
+    adults: 16,
+    children: 5,
+    infants: 5,
+  });
 
   const onCalendarFocusChange: OnFocusChange = (focusedShape) => {
     // calendar MUST be focused for dates to be selected. null can happen when you have selected startDate and endDate.
@@ -124,7 +153,19 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
         </ReservationDatesContainer>
       )}
 
-      <ClearableTextField variant="outlined" helperText="Guests" disabled />
+      <GuestsSelector
+        open={isGuestsSelectorOpen}
+        setOpen={(v: boolean) => setIsGuestsSelectorOpen(v)}
+        guestsState={guests}
+        dispatchGuestsSelectorAction={(action: Actions) =>
+          dispatchGuestsSelectorAction({
+            type: action,
+          })
+        }
+        canUpdateGuestsValue={canUpdateGuestState}
+      />
+
+      <ReserveButton type="button">Reserve</ReserveButton>
     </Form>
   );
 };

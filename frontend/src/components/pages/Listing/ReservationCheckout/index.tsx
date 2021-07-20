@@ -6,13 +6,18 @@ import PricingBreakdown from "./PricingBreakdown";
 import ReservationForm from "./ReservationForm";
 
 const Container = styled.div`
-  display: flex;
+  display: inline-flex;
+  background-color: ${(p) => p.theme.colors.primaryBackground};
+  position: sticky;
+  top: 0;
+  /* float: right; */
+  flex: 0 0 auto;
   flex-direction: column;
   padding: 20px;
   width: 35%;
+  max-height: 350px;
   border: 2px solid ${(p) => p.theme.colors.secondaryBackground};
   border-radius: 16px;
-  /* background-color: grey; */
 `;
 
 const ReservationSummaryContainer = styled.div`

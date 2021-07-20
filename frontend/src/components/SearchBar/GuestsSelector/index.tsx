@@ -2,9 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import SearchItem from "../common/SearchItem";
 import SearchInput from "../common/SearchInput";
-import GuestsSelectorDropdown from "./GuestsSelectorDropdown";
+import GuestsSelectorDropdown from "../../shared/GuestsSelectorForm/GuestsSelectorDropdown";
 import SearchButton from "./SearchButton";
-import { Actions, GuestsState } from "./useGuestsSelector";
+import {
+  Actions,
+  GuestsState,
+} from "../../shared/GuestsSelectorForm/useGuestsSelector";
 
 const GuestSelectorContainer = styled.div`
   display: flex;

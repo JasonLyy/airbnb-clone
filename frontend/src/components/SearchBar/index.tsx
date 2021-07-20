@@ -7,7 +7,7 @@ import { useOutsideAlerter } from "../../hooks/outsideAlerter";
 import useGuestSelector, {
   Actions,
   GuestsState,
-} from "./GuestsSelector/useGuestsSelector";
+} from "../shared/GuestsSelectorForm/useGuestsSelector";
 import { ComponentId } from "./enums";
 import GuestsSelector from "./GuestsSelector";
 import type { Moment } from "moment";

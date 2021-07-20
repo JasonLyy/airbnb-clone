@@ -39,9 +39,9 @@ interface ViewPhotosProps {
 const ViewPhotos: React.VFC<ViewPhotosProps> = ({ photosUrl }) => {
   const photos = photosUrl.map((url, index) => {
     return index === 0 ? (
-      <PhotoPrimary url={url} />
+      <PhotoPrimary url={url} key={url} />
     ) : (
-      <PhotoSecondary url={url} />
+      <PhotoSecondary url={url} key={url} />
     );
   });
 
