@@ -1,9 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { createContext } from "react";
 import Cookies from "universal-cookie";
 
-export const reauth = () => {
+export const reauth = (): Promise<AxiosResponse<unknown>> => {
   return axios
     .create({
       baseURL: "http://localhost:8001/",
@@ -31,7 +31,9 @@ export const AuthInterceptors: React.FC = ({ children }) => {
         // GraphQL errors return 200 response so we need to check if it returns Unauthorized in array objec
         if (
           response.data.errors &&
-          response.data.errors.some((e: any) => e?.message === "unauthorized")
+          response.data.errors.some(
+            (e: Error) => e.message && e?.message === "unauthorized"
+          )
         ) {
           axios.interceptors.response.eject(interceptor);
           const result = reauth()
@@ -79,7 +81,7 @@ export const AppContextProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!loggedIn) {
-      reauth().then((r) => updateIsloggedIn(true));
+      reauth().then(() => updateIsloggedIn(true));
     }
   }, []);
 

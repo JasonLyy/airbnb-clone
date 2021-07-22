@@ -14,8 +14,7 @@ const GuestsSelectorDropdownContainer = styled.div`
   width: 394px;
   max-height: calc(100vh - 220px);
   top: 100%;
-  left: 0;
-  /* right: 0px; */
+  right: 0;
   overflow-y: auto;
   background-color: ${(p) => p.theme.colors.primaryBackground};
   margin-top: 12px;

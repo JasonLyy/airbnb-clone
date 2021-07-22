@@ -7,7 +7,7 @@ const AUTH_PAYLOAD_FIELDS = gql`
   }
 `;
 
-const CREATE_GUEST = gql`
+gql`
   ${AUTH_PAYLOAD_FIELDS}
 
   mutation createGuest($input: CredentialsInput!) {
@@ -17,7 +17,7 @@ const CREATE_GUEST = gql`
   }
 `;
 
-const LOGIN_GUEST = gql`
+gql`
   ${AUTH_PAYLOAD_FIELDS}
 
   mutation loginGuest($input: CredentialsInput!) {

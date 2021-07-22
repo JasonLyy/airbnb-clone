@@ -37,7 +37,7 @@ type LocationSearchProps = {
   inputText: SearchInput;
 };
 
-const LocationSearch: React.FC<LocationSearchProps> = ({ inputText }) => {
+const LocationSearch: React.FC<LocationSearchProps> = () => {
   return (
     <>
       <SearchResultPreview>

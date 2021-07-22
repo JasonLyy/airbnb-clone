@@ -1,3 +1,4 @@
+import ListingCapcitySummary from "App/components/shared/ListingCapcitySummary";
 import PricingSummary from "App/components/shared/PricingSummary";
 import ReviewSummary from "App/components/shared/ReviewSummary";
 import React from "react";
@@ -45,10 +46,6 @@ const Divider = styled.div`
   width: 32px;
 `;
 
-const ListingCapacity = styled.div`
-  margin-top: 9px;
-`;
-
 const Amenities = styled.div`
   margin-top: 4px;
 `;
@@ -75,25 +72,6 @@ interface ListingCardProps {
   ratings: number;
   pictureUrl: string;
 }
-
-const buildListingCapcityText = ({
-  guests,
-  beds,
-  bathroom,
-  bedroom,
-}: Pick<ListingCardProps, "guests" | "bedroom" | "bathroom" | "beds">) => {
-  return (
-    <ListingCapacity>
-      <SubText>{guests} guests</SubText>
-      <SubText> · </SubText>
-      <SubText>{bedroom} bedrooms</SubText>
-      <SubText> · </SubText>
-      <SubText>{beds} beds</SubText>
-      <SubText> · </SubText>
-      <SubText>{bathroom} baths</SubText>
-    </ListingCapacity>
-  );
-};
 
 const buildAmenitiesText = (amenities: string[]) => (
   <Amenities>
@@ -130,12 +108,12 @@ const ListingCard: React.FC<
         <Subheading>{subheading}</Subheading>
         <Heading>{heading}</Heading>
         <Divider />
-        {buildListingCapcityText({
-          guests,
-          bedroom,
-          beds,
-          bathroom,
-        })}
+        <ListingCapcitySummary
+          guests={guests}
+          bedroom={bedroom}
+          bathroom={bathroom}
+          beds={beds}
+        />
         {buildAmenitiesText(amenities)}
         <BottomContainer>
           <ReviewSummary ratings={ratings} reviews={reviews} />

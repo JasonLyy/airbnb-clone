@@ -4,6 +4,8 @@ import Results from "./Results";
 import { useGetListingsQuery } from "./__generated__/queries.generated";
 import { useSearchListingsParam } from "./useSearchParams";
 import Pagination from "../../shared/Pagination";
+import Loader from "App/components/shared/Loader";
+import Footer from "App/components/shared/Footer";
 
 const SearchHomeContainer = styled.div`
   background-color: white;
@@ -24,11 +26,6 @@ const SearchHomesMap = styled.div`
   flex: 1;
 `;
 
-const SearchHomesFooter = styled.div`
-  background-color: black;
-  height: 550px;
-`;
-
 const SearchHomes: React.FC = () => {
   const [
     searchQueryParams,
@@ -37,7 +34,7 @@ const SearchHomes: React.FC = () => {
   ] = useSearchListingsParam();
 
   const { isLoading, data } = useGetListingsQuery(searchQueryParams);
-  if (!data || isLoading) return <div>loading</div>;
+  if (!data || isLoading) return <Loader />;
 
   const listingsInput = searchQueryParams.input;
 
@@ -68,7 +65,7 @@ const SearchHomes: React.FC = () => {
         </Results>
         <SearchHomesMap />
       </SearchHomesBody>
-      <SearchHomesFooter>Footer</SearchHomesFooter>
+      <Footer />
     </SearchHomeContainer>
   );
 };

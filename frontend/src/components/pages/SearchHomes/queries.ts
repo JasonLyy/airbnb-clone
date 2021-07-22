@@ -25,7 +25,7 @@ const LISTING_FIELDS = gql`
   }
 `;
 
-const GET_LISTINGS = gql`
+gql`
   ${PAGE_INFO_FIELDS}
   ${LISTING_FIELDS}
 

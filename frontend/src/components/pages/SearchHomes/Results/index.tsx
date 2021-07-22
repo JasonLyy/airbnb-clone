@@ -92,7 +92,7 @@ const Results: React.FC<ResultsProps> = ({
           reviews={reviews ?? -1}
           ratings={rating ?? -1}
           pictureUrl={pictureUrl ?? ""}
-          onClick={() => openListing(id)}
+          onClick={() => openListing(id.toString())}
         />
       );
     });

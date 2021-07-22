@@ -4,7 +4,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
+  ID: number;
   String: string;
   Boolean: boolean;
   Int: number;
@@ -129,7 +129,13 @@ export type PaginationInput = {
 
 export type Query = {
   __typename?: 'Query';
+  listing?: Maybe<Listing>;
   listings: ListingConnection;
+};
+
+
+export type QueryListingArgs = {
+  id: Scalars['ID'];
 };
 
 

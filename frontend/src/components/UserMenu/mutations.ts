@@ -6,7 +6,7 @@ const LOGOUT_PAYLOAD_FIELDS = gql`
   }
 `;
 
-const LOGOUT_GUEST = gql`
+gql`
   ${LOGOUT_PAYLOAD_FIELDS}
 
   mutation logoutGuest {

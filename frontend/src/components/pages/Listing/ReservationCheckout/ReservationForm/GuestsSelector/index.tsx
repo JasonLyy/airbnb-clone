@@ -25,7 +25,7 @@ const DropdownField = styled.div`
 
 const Dropdown = styled.div`
   position: absolute;
-  left: 24px;
+  right: 0;
 `;
 
 interface GuestsSelectorProps {

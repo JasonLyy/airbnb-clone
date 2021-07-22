@@ -5,6 +5,9 @@ generates:
   src/types/types.generated.ts:
     plugins:
       - "typescript"
+    config:
+      scalars:
+        ID: number
   src/:
     preset: near-operation-file
     presetConfig:
@@ -18,3 +21,4 @@ generates:
       fetcher:
         # endpoint: "http://localhost:8001/graphql"
         func: 'App/fetcher#fetchData'
+
