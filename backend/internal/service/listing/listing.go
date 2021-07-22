@@ -29,6 +29,10 @@ func (l listingService) Rating(id int64) (float64, error) {
 	return l.reviewRepo.ListingRating(id)
 }
 
+func (l listingService) Listing(id int64) (*model.Listing, error) {
+	return l.listingRepo.Listing(id)
+}
+
 func (l listingService) ListingConnection(page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
 	var guests int
 	if input.Adults != nil {

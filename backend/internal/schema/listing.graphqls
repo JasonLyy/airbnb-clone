@@ -44,6 +44,7 @@ input ListingsInput {
 }
 
 type Query {
+  listing(id: ID!): Listing
   listings(page: PaginationInput!, input: ListingsInput!): ListingConnection!
 }
 

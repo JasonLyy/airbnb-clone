@@ -15,6 +15,17 @@ func NewListingRepository(db *gorm.DB) listingRepository {
 	}
 }
 
+func (l listingRepository) Listing(id int64) (*model.Listing, error) {
+	var listing *model.Listing
+
+	err := l.DB.Find(&listing, id).Error
+
+	if err != nil {
+		return listing, err
+	}
+	return listing, nil
+}
+
 func (l listingRepository) FilteredListings(page model.PaginationInput, nights int, guests int, location string) ([]*model.Listing, error) {
 	var listings []*model.Listing
 

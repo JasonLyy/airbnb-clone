@@ -112,6 +112,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Listing  func(childComplexity int, id int64) int
 		Listings func(childComplexity int, page model.PaginationInput, input model.ListingsInput) int
 	}
 }
@@ -126,6 +127,7 @@ type MutationResolver interface {
 	LogoutGuest(ctx context.Context) (*model.LogoutPayload, error)
 }
 type QueryResolver interface {
+	Listing(ctx context.Context, id int64) (*model.Listing, error)
 	Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error)
 }
 
@@ -427,6 +429,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "Query.listing":
+		if e.complexity.Query.Listing == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listing_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Listing(childComplexity, args["id"].(int64)), true
+
 	case "Query.listings":
 		if e.complexity.Query.Listings == nil {
 			break
@@ -574,6 +588,7 @@ input ListingsInput {
 }
 
 type Query {
+  listing(id: ID!): Listing
   listings(page: PaginationInput!, input: ListingsInput!): ListingConnection!
 }
 
@@ -655,6 +670,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listing_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int64
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -2040,6 +2070,45 @@ func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field gra
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listing(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listing_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Listing(rctx, args["id"].(int64))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Listing)
+	fc.Result = res
+	return ec.marshalOListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListing(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_listings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3765,6 +3834,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "listing":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listing(ctx, field)
+				return res
+			})
 		case "listings":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -4543,6 +4623,13 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return graphql.MarshalInt(*v)
+}
+
+func (ec *executionContext) marshalOListing2ᚖgithubᚗcomᚋJasonLyyᚋairbnbᚑcloneᚋbackendᚋinternalᚋmodelᚐListing(ctx context.Context, sel ast.SelectionSet, v *model.Listing) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Listing(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

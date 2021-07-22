@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/generated"
-	"github.com/JasonLyy/airbnb-clone/backend/internal/middleware"
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
 )
 
@@ -30,11 +29,20 @@ func (r *listingResolver) Rating(ctx context.Context, obj *model.Listing) (*floa
 	return &rating, nil
 }
 
-func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
-	if user := middleware.ContextUser(ctx); user == nil {
-		return &model.ListingConnection{}, &UnauthorizedError{}
-
+func (r *queryResolver) Listing(ctx context.Context, id int64) (*model.Listing, error) {
+	l, err := r.listingService.Listing(id)
+	if err != nil {
+		return l, err
 	}
+
+	return l, nil
+}
+
+func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
+	// if user := middleware.ContextUser(ctx); user == nil {
+	// 	return &model.ListingConnection{}, &UnauthorizedError{}
+
+	// }
 
 	return r.listingService.ListingConnection(page, input)
 }
