@@ -16,6 +16,7 @@ import useGuestsSelector, {
   Actions,
 } from "App/components/shared/GuestsSelectorForm/useGuestsSelector";
 import GuestsSelector from "./GuestsSelector";
+import moment from "moment";
 
 const Form = styled.form`
   display: flex;
@@ -53,10 +54,20 @@ interface ReservationFormProps {
   adults?: number;
   infants?: number;
   children?: number;
+  checkIn?: Moment | null;
+  checkOut?: Moment | null;
+  setStartDate: (m: Moment | null) => void;
+  setEndDate: (m: Moment | null) => void;
 }
-const ReservationForm: React.VFC<ReservationFormProps> = () => {
-  const [startDate, setStartDate] = useState<Moment | null>(null);
-  const [endDate, setEndDate] = useState<Moment | null>(null);
+const ReservationForm: React.VFC<ReservationFormProps> = ({
+  adults,
+  children,
+  infants,
+  checkIn,
+  checkOut,
+  setStartDate,
+  setEndDate,
+}) => {
   const [
     focusedCalendarDate,
     setFocusedCalendarDate,
@@ -68,11 +79,18 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
     guests,
     dispatchGuestsSelectorAction,
     canUpdateGuestState,
-  ] = useGuestsSelector({
-    adults: 16,
-    children: 5,
-    infants: 5,
-  });
+  ] = useGuestsSelector(
+    {
+      adults: 16,
+      children: 5,
+      infants: 5,
+    },
+    {
+      adults: adults || 0,
+      infants: infants || 0,
+      children: children || 0,
+    }
+  );
 
   const onCalendarFocusChange: OnFocusChange = (focusedShape) => {
     // calendar MUST be focused for dates to be selected. null can happen when you have selected startDate and endDate.
@@ -105,7 +123,7 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
         <ClearableTextField
           variant="outlined"
           helperText="Check In"
-          value={startDate?.format("D MMM") ?? ""}
+          value={checkIn?.format("D MMM") ?? ""}
           onFocus={() => {
             setIsCalendarOpen(true);
             setFocusedCalendarDate(START_DATE);
@@ -123,7 +141,7 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
         <ClearableTextField
           variant="outlined"
           helperText="Check Out"
-          value={endDate?.format("D MMM") ?? ""}
+          value={checkOut?.format("D MMM") ?? ""}
           onFocusCapture={() => {
             setIsCalendarOpen(true);
             setFocusedCalendarDate(END_DATE);
@@ -135,7 +153,9 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
               </InputAdornment>
             ),
           }}
-          onClear={() => setEndDate(null)}
+          onClear={() => {
+            setEndDate(null);
+          }}
           showClearButton
         />
       </DatesInputContainer>
@@ -143,8 +163,8 @@ const ReservationForm: React.VFC<ReservationFormProps> = () => {
       {isCalendarOpen && (
         <ReservationDatesContainer ref={calendarRef}>
           <ReservationDates
-            startDate={startDate}
-            endDate={endDate}
+            startDate={checkIn ? checkIn : null}
+            endDate={checkOut ? checkOut : null}
             setStartDate={(d: Moment | null) => setStartDate(d)}
             setEndDate={(d: Moment | null) => setEndDate(d)}
             focusedCalendarDate={focusedCalendarDate}

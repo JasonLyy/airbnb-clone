@@ -1,5 +1,6 @@
 import PricingSummary from "App/components/shared/PricingSummary";
 import ReviewSummary from "App/components/shared/ReviewSummary";
+import { Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
 import PricingBreakdown from "./PricingBreakdown";
@@ -26,17 +27,55 @@ const ReservationSummaryContainer = styled.div`
   align-items: center;
 `;
 
-const ReservationCheckout: React.VFC = () => {
+interface ReservationCheckoutProps {
+  price: number;
+  review: number;
+  rating: number;
+  nights?: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
+  checkIn?: Moment | null;
+  checkOut?: Moment | null;
+  setStartDate: (m: Moment | null) => void;
+  setEndDate: (m: Moment | null) => void;
+}
+const ReservationCheckout: React.VFC<ReservationCheckoutProps> = ({
+  price,
+  review,
+  rating,
+  nights,
+  adults,
+  children,
+  infants,
+  checkIn,
+  checkOut,
+  setStartDate,
+  setEndDate,
+}) => {
   return (
     <Container>
       <ReservationSummaryContainer>
-        <PricingSummary price={5000} nights={5} />
-        <ReviewSummary reviews={5} ratings={5} />
+        <PricingSummary price={price} nights={nights || 1} />
+        <ReviewSummary reviews={review} ratings={rating} />
       </ReservationSummaryContainer>
 
-      <ReservationForm />
+      <ReservationForm
+        adults={adults}
+        infants={infants}
+        // eslint-disable-next-line react/no-children-prop
+        children={children}
+        checkIn={checkIn}
+        checkOut={checkOut}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+      />
 
-      <PricingBreakdown price={5000} nights={5} serviceFee={500} />
+      <PricingBreakdown
+        price={price}
+        nights={nights || 1}
+        serviceFee={price * 0.1}
+      />
     </Container>
   );
 };

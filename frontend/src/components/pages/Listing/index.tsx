@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useGetListingParam } from "./useGetListingParams";
 import ViewPhotos from "./ViewPhotos";
@@ -11,6 +11,7 @@ import ListingCapcitySummary from "App/components/shared/ListingCapcitySummary";
 import Loader from "App/components/shared/Loader";
 import Footer from "App/components/shared/Footer";
 import Header from "App/components/shared/Header";
+import moment, { Moment } from "moment";
 
 const Container = styled.div`
   background-color: white;
@@ -42,11 +43,25 @@ const AmenitiesList = styled.ul`
 `;
 
 const Listing: React.VFC = () => {
-  const { listingId, infants, adults, children } = useGetListingParam();
+  const {
+    listingId,
+    infants,
+    adults,
+    children,
+    checkIn,
+    checkOut,
+  } = useGetListingParam();
   const guestsCount =
     parseInt(infants || "0", 10) +
     parseInt(adults || "0", 10) +
     parseInt(children || "0", 10);
+
+  const [startDate, setStartDate] = useState<Moment | null>(
+    moment(checkIn, "DD-MM-YYYY")
+  );
+  const [endDate, setEndDate] = useState<Moment | null>(
+    moment(checkOut, "DD-MM-YYYY")
+  );
 
   const { data, isLoading } = useListingQuery({
     id: parseInt(listingId, 10),
@@ -119,7 +134,22 @@ const Listing: React.VFC = () => {
                 ))}
               </AmenitiesList>
             </BodyDescription>
-            <ReservationCheckout />
+            <ReservationCheckout
+              price={1000}
+              adults={parseInt(adults || "0")}
+              // eslint-disable-next-line react/no-children-prop
+              children={parseInt(children || "0")}
+              infants={parseInt(infants || "0")}
+              checkIn={startDate}
+              checkOut={endDate}
+              review={reviews || 0}
+              rating={rating || 0}
+              nights={
+                endDate && startDate ? endDate.diff(startDate, "days") + 1 : 1
+              }
+              setStartDate={(m: Moment | null) => setStartDate(m)}
+              setEndDate={(m: Moment | null) => setEndDate(m)}
+            />
           </BodyInfo>
         </BodyContainer>
       </Body>
