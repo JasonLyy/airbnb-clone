@@ -17,6 +17,7 @@ const SearchResultPreview = styled.div`
   margin-top: 12px;
   padding: 32px 0px;
   z-index: 4;
+  box-shadow: rgb(0 0 0 / 18%) 0px 1px 12px;
 `;
 
 const RecentSearchesDivider = styled.div`

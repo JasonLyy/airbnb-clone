@@ -25,6 +25,7 @@ const DateSelectorContainer = styled.div`
   border-radius: 32px;
   margin-top: 12px;
   padding: 16px 0px;
+  box-shadow: rgb(0 0 0 / 18%) 0px 1px 12px;
 `;
 
 interface DatesSelectorProps {

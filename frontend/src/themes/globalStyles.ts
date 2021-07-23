@@ -11,7 +11,6 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
-    background: grey;
     font-size: 14px;
     color: ${(p) => p.theme.colors.primaryComponent};
     font-family: "Airbnb Cereal App Light", Roboto, "Helvetica Neue", sans-serif, Arial;
