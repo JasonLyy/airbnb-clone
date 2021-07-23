@@ -2,15 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import SearchItem from "../common/SearchItem";
 import SearchInput from "../common/SearchInput";
-import GuestsSelectorDropdown from "../../shared/GuestsSelectorForm/GuestsSelectorDropdown";
+import GuestsSelectorDropdown from "../../GuestsSelectorForm/GuestsSelectorDropdown";
 import SearchButton from "./SearchButton";
 import {
   Actions,
   GuestsState,
-} from "../../shared/GuestsSelectorForm/useGuestsSelector";
+} from "../../GuestsSelectorForm/useGuestsSelector";
 
 const GuestSelectorContainer = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const generateSelectedGuestsText = (guestsState: GuestsState) => {
@@ -54,8 +56,10 @@ const GuestsSelector: React.FC<GuestsSelectorProps> = ({
             text={generateSelectedGuestsText(guestsState)}
             disabled
           />
-          {/* todo: SearchButton supports expanding to have Search */}
-          <SearchButton onButtonClick={onSearch} />
+
+          <SearchButton onButtonClick={onSearch} selected={selected || false}>
+            Search
+          </SearchButton>
         </GuestSelectorContainer>
       </SearchItem>
 

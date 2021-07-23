@@ -36,6 +36,7 @@ const MenuButton = styled.button`
   padding-bottom: 5px;
   border: 1px solid #dddddd;
   outline: none;
+  background-color: ${(p) => p.theme.colors.primaryBackground};
   color: ${(p) => p.theme.colors.secondaryComponent};
 
   &:hover {

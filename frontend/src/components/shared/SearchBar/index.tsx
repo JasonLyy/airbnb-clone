@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import VerticalDivider from "../shared/VerticalDivider";
+import VerticalDivider from "../VerticalDivider";
 import LocationSearch from "./LocationSearch/index";
 import BookingDates from "./BookingDates";
-import { useOutsideAlerter } from "../../hooks/outsideAlerter";
+import { useOutsideAlerter } from "../../../hooks/outsideAlerter";
 import useGuestSelector, {
   Actions,
   GuestsState,
-} from "../shared/GuestsSelectorForm/useGuestsSelector";
+} from "../GuestsSelectorForm/useGuestsSelector";
 import { ComponentId } from "./enums";
 import GuestsSelector from "./GuestsSelector";
 import type { Moment } from "moment";
@@ -65,7 +65,10 @@ const buildSearchQueryLink = (input: {
   };
 };
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+  ref?: React.RefObject<HTMLDivElement>;
+}
+const SearchBar: React.FC<SearchBarProps> = ({ ref }) => {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const [selectedSearchOption, setSelectedSearchOption] = useState<
     number | null
@@ -100,7 +103,7 @@ const SearchBar: React.FC = () => {
   //todo: Refactor how to represent when a component is selected. Current solution is 🤮. Possibly dynamically generate the options?
   return (
     <SearchContainer
-      ref={searchContainerRef}
+      ref={ref ? ref : searchContainerRef}
       selected={selectedSearchOption !== null}
     >
       <LocationSearch
@@ -140,7 +143,7 @@ const SearchBar: React.FC = () => {
         onSearch={() =>
           history.push(
             buildSearchQueryLink({
-              locationText: locationText,
+              locationText: locationText ?? "Explore Nearby Destinations",
               guests: guestsState,
               startDate: startDate,
               endDate: endDate,

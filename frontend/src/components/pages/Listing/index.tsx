@@ -10,15 +10,10 @@ import HorizontalDivider from "App/components/shared/HorizontalDivider";
 import ListingCapcitySummary from "App/components/shared/ListingCapcitySummary";
 import Loader from "App/components/shared/Loader";
 import Footer from "App/components/shared/Footer";
+import Header from "App/components/shared/Header";
 
 const Container = styled.div`
   background-color: white;
-`;
-
-const Header = styled.div`
-  background-color: ${(p) => p.theme.colors.primaryBackground};
-  height: 80px;
-  box-shadow: rgba(0, 0, 0, 0.18) 0px 1px 12px;
 `;
 
 const Body = styled.div`
@@ -76,7 +71,7 @@ const Listing: React.VFC = () => {
 
   return (
     <Container>
-      <Header>Header</Header>
+      <Header />
       <Body>
         <BodyContainer>
           <ListingHeader

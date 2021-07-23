@@ -6,14 +6,10 @@ import { useSearchListingsParam } from "./useSearchParams";
 import Pagination from "../../shared/Pagination";
 import Loader from "App/components/shared/Loader";
 import Footer from "App/components/shared/Footer";
+import Header from "App/components/shared/Header";
 
 const SearchHomeContainer = styled.div`
   background-color: white;
-`;
-
-const SearchHomesHeader = styled.div`
-  background-color: ${(p) => p.theme.colors.primaryBackground};
-  height: 80px;
 `;
 
 const SearchHomesBody = styled.div`
@@ -49,7 +45,7 @@ const SearchHomes: React.FC = () => {
 
   return (
     <SearchHomeContainer>
-      <SearchHomesHeader>Search Header</SearchHomesHeader>
+      <Header />
       <SearchHomesBody>
         <Results
           listings={listings}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import VerticalDivider from "../../shared/VerticalDivider";
+import VerticalDivider from "../../VerticalDivider";
 import { ComponentId } from "../enums";
 import SearchItem from "../common/SearchItem";
 import DatesSelector, {
@@ -8,7 +8,7 @@ import DatesSelector, {
   OnFocusChange,
   START_DATE,
   END_DATE,
-} from "../../shared/DatesSelector";
+} from "../../DatesSelector";
 import moment, { Moment } from "moment";
 import type { FocusedInputShape } from "react-dates";
 import SearchInput from "../common/SearchInput";

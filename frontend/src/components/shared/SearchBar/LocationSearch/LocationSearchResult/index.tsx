@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { SearchInput } from "../../types";
 import CardItem from "./CardItem";
-import PreviousSearchIconImage from "../../../../assets/recent-search-icon.svg";
-import NearbyDestinationImage from "../../../../assets/map-icon.png";
+import PreviousSearchIconImage from "../../../../../assets/recent-search-icon.svg";
+import NearbyDestinationImage from "../../../../../assets/map-icon.png";
 
 const SearchResultPreview = styled.div`
   position: absolute;
@@ -16,6 +16,7 @@ const SearchResultPreview = styled.div`
   border-radius: 32px;
   margin-top: 12px;
   padding: 32px 0px;
+  z-index: 4;
 `;
 
 const RecentSearchesDivider = styled.div`
