@@ -12,6 +12,7 @@ const Container = styled.div`
   border: 1px solid #dddddd;
   width: 100%;
   max-width: 400px;
+  margin: 17px 0;
 
   &:hover {
     cursor: pointer;

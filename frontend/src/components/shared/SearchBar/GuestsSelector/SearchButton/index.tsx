@@ -15,7 +15,7 @@ const Button = styled.button`
   height: 48px;
   background-color: ${(p) => p.theme.colors.primary};
   color: ${(p) => p.theme.colors.primaryTitleText};
-  border-radius: 22px;
+  border-radius: 24px;
   border: 0px;
   outline: none;
   margin-left: 8px;
@@ -41,14 +41,12 @@ type SearchButtonProps = {
 
 const SearchButton: React.FC<SearchButtonProps> = ({
   onButtonClick,
-  children,
   selected = false,
 }) => {
   return selected ? (
     <Button onClick={onButtonClick}>
       <Container>
         <SearchIcon />
-        <ButtonText>{children}</ButtonText>
       </Container>
     </Button>
   ) : (

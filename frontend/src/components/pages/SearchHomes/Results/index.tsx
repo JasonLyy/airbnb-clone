@@ -14,8 +14,7 @@ const ResultsContainer = styled.div`
   max-width: 920px;
   min-width: 589px;
   width: 840px;
-  margin-left: 16px;
-  margin-right: 16px;
+  padding: 0 16px;
 `;
 
 const Heading = styled.div`

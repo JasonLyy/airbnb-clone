@@ -18,7 +18,7 @@ const MainContainer = styled.div<HeaderProps>`
   flex-direction: column;
   padding: 16px 32px;
   background-color: ${(p) => p.theme.colors.primaryBackground};
-  align-items: center;
+
   justify-content: space-between;
   min-height: 72px;
   box-shadow: rgba(0, 0, 0, 0.18) 0px 1px 12px;
@@ -28,6 +28,7 @@ const TopRow = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const Logo = styled(AirBnbLogo)`
@@ -58,18 +59,20 @@ const Header: React.VFC<HeaderProps> = ({ sticky = false }) => {
             <Logo />
           </a>
           {isSearchOpen ? (
-            <div />
+            <div ref={searchBarRef}>
+              <SearchBar />
+            </div>
           ) : (
             <FakeSearchBar onClick={() => setIsSearchOpen(true)} />
           )}
           <Menu />
         </TopRow>
 
-        {isSearchOpen && (
+        {/* {isSearchOpen && (
           <div ref={searchBarRef}>
             <SearchBar />
           </div>
-        )}
+        )} */}
       </MainContainer>
     </>
   );

@@ -5,7 +5,6 @@ import styled from "styled-components";
 const FrontBanner = styled.img`
   content: url(${FrontBannerImage});
   width: 100%;
-  max-height: 720px;
 `;
 
 const MainBanner: React.VFC = () => {

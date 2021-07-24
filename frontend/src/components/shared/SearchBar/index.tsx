@@ -19,7 +19,7 @@ const SearchContainer = styled.div<{ selected: boolean }>`
   margin: 16px auto;
   border: 1px solid #dddddd;
   border-radius: 32px;
-  width: 70%;
+  width: 95%;
   height: 66px;
   display: flex;
   background-color: ${(p) => {

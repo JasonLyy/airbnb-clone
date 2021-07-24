@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const HouseImage = styled.img<Partial<HouseCardProps>>`
-  width: 320px;
+  width: 90%;
   content: url(${(p) => p.url});
   margin: 0;
   padding: 0;
