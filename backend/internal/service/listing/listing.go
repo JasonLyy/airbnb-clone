@@ -45,7 +45,10 @@ func (l listingService) ListingConnection(page model.PaginationInput, input mode
 		guests += *input.Infants
 	}
 
-	nights := int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
+	nights := 1
+	if input.CheckIn != nil && input.CheckOut != nil {
+		nights = int(math.Ceil(input.CheckOut.Sub(*input.CheckIn).Hours() / 24))
+	}
 
 	listings, e := l.listingRepo.FilteredListings(page, nights, guests, input.Location)
 	if e != nil {

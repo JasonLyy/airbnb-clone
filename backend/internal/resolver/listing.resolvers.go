@@ -39,11 +39,6 @@ func (r *queryResolver) Listing(ctx context.Context, id int64) (*model.Listing, 
 }
 
 func (r *queryResolver) Listings(ctx context.Context, page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
-	// if user := middleware.ContextUser(ctx); user == nil {
-	// 	return &model.ListingConnection{}, &UnauthorizedError{}
-
-	// }
-
 	return r.listingService.ListingConnection(page, input)
 }
 
