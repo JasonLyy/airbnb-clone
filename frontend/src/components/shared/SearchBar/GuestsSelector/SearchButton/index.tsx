@@ -27,13 +27,6 @@ const Button = styled.button`
   }
 `;
 
-const ButtonText = styled.span`
-  margin-left: 4px;
-  margin-right: 4px;
-  margin-bottom: 4px;
-  font-weight: ${(p) => p.theme.fontWeights.bold};
-`;
-
 type SearchButtonProps = {
   onButtonClick: () => void;
   selected?: boolean;

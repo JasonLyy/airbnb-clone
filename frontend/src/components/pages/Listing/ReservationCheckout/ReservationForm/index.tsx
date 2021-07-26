@@ -16,7 +16,6 @@ import useGuestsSelector, {
   Actions,
 } from "App/components/shared/GuestsSelectorForm/useGuestsSelector";
 import GuestsSelector from "./GuestsSelector";
-import moment from "moment";
 
 const Form = styled.form`
   display: flex;

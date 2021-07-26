@@ -6,8 +6,6 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 
 const config: webpack.Configuration = {
   entry: "./src/index.tsx",
-  mode: "development",
-  devtool: "inline-source-map",
   module: {
     rules: [
       {
@@ -73,12 +71,6 @@ const config: webpack.Configuration = {
     path: path.resolve(__dirname, "build"),
     publicPath: "/",
     filename: "bundle.js",
-  },
-  devServer: {
-    contentBase: path.join(__dirname, "build"),
-    historyApiFallback: true,
-    compress: false,
-    port: 4000,
   },
 };
 
