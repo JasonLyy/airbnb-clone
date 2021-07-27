@@ -5,6 +5,9 @@ This project was started to be the learning platform for new languages/tools/tec
 
 The primary goal was to learn some Go. 
 
+## Current Bugs
+- Need to fix case where redis invalidates JWT but frontend does not reflect this.
+
 ## Pre-requisites 
 - Go
 - Yarn
@@ -12,11 +15,8 @@ The primary goal was to learn some Go.
 
 ## Getting Started
 
-### Backend 
-The entire dev environment is all in docker. To start run:
-
 ```
-docker-compose up
+docker-compose up -f docker-compose.yml -f docker-compose.override.yml up
 ```
 
 ## Loading Fixtures Data 

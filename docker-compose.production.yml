@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  postgres:
+    ports:
+      - 5432:5432
+    # volumes: []
+
+  pgadmin:
+    ports:
+      - 8080:8080
+    # volumes: []
+
+  redis:
+    ports: 
+      - 6379:6379
+    # volumes: []
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports: 
+      - 80:80
+    # volumes: []
+          
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports: 
+      - 8001:8001
+    # volumes: []

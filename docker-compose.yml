@@ -3,56 +3,55 @@ services:
   postgres:
     image: postgres:latest
     container_name: airbnb-clone-server-db
-    volumes:
-      - "${PWD}/backend/db/volume:/var/lib/postgresql/data"
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=password
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 3
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: airbnb-clone-server-db-admin
-    volumes:
-      - ${PWD}/backend/db/pgadmin_servers:/pgadmin4/pgadmin_servers
-    ports:
-      - 8080:80
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+  redis:
+    build: ./backend/db/redis
+    container_name: airbnb-clone-server-redis
+          
+  backend:
+    build: ./backend
+    container_name: airbnb-clone-server-backend
+    depends_on: 
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_TIMEZONE=${DB_TIMEZONE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 3
 
-  redis:
-    image: redis:alpine
-    container_name: airbnb-clone-server-redis
-    ports: 
-        - 6379:6379
-    volumes:
-      - ./db/redis/redis.conf:/redis.conf
-    command: ["redis-server", "/redis.conf"]
-          
-  backend:
-    build: ./backend
-    container_name: airbnb-clone-server-backend
-    ports: 
-      - 8001:8001
-    depends_on: 
-      - postgres
-      - redis
-    volumes: 
-      - "${PWD}/backend:/app"
-
   frontend:
     build: ./frontend
     container_name: airbnb-clone-server-frontend
-    ports: 
-      - 4000:4000
-    volumes:
-      - "${PWD}/frontend:/app"
+    depends_on:
+      - backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3

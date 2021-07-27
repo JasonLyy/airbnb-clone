@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/joho/godotenv"
 )
 
 type redisConfig struct {
@@ -14,11 +13,6 @@ type redisConfig struct {
 }
 
 func loadRedisVariables() (*redisConfig, error) {
-	err := godotenv.Load(".env.dev")
-	if err != nil {
-		return nil, err
-	}
-
 	return &redisConfig{
 		host: os.Getenv("REDIS_HOST"),
 		port: os.Getenv("REDIS_PORT"),

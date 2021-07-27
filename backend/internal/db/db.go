@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -20,11 +19,6 @@ type dbConfig struct {
 }
 
 func loadDbVariables() (*dbConfig, error) {
-	err := godotenv.Load(".env.dev")
-	if err != nil {
-		return nil, err
-	}
-
 	return &dbConfig{
 		host:     os.Getenv("DB_HOST"),
 		user:     os.Getenv("DB_USER"),
