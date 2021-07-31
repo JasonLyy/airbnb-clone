@@ -2,19 +2,19 @@ version: "3.8"
 services:
   postgres:
     volumes:
-      - "${PWD}/backend/db/volume:/var/lib/postgresql/data"
+      - "${PWD}/db/volume:/var/lib/postgresql/data"
     ports:
       - 5432:5432
 
   pgadmin:
     volumes:
-      - ${PWD}/db/pgadmin_servers:/pgadmin4/pgadmin_servers
+      - ${PWD}/pgadmin/pgadmin_servers:/pgadmin4/pgadmin_servers
     ports:
       - 8080:8080
 
   redis:
     volumes:
-      - ./db/redis/redis.conf:/redis.conf
+      - ${PWD}/redis/redis.conf:/redis.conf
     ports: 
       - 6379:6379
           
@@ -22,10 +22,10 @@ services:
     volumes: 
       - "${PWD}/backend:/app"
     ports: 
-      - 8001:8001
+      - 8001:80
 
   frontend:
     volumes:
       - "${PWD}/frontend:/app"
     ports: 
-      - 4000:4000
+      - 4000:80

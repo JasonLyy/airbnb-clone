@@ -9,4 +9,6 @@ RUN yarn install
 
 COPY . ./
 
+EXPOSE 80
+
 CMD yarn start

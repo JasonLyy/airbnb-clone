@@ -10,7 +10,7 @@ const config: webpack.Configuration = merge(common, {
     contentBase: path.join(__dirname, "build"),
     historyApiFallback: true,
     compress: false,
-    port: 4000,
+    port: 80,
   },
 });
 

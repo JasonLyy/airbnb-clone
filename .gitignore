@@ -23,11 +23,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
-
-# Redis and Postgres Docker Local Storage
-db/volume
-db/pgadmin_servers
-db/redis/redis-data
-
-# Air Live Reload
-tmp

@@ -23,7 +23,7 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
 
   redis:
-    build: ./backend/db/redis
+    build: ${PWD}/redis
     container_name: airbnb-clone-server-redis
           
   backend:

@@ -24,5 +24,5 @@ func main() {
 	listingService := listing.NewListingService(listingRepo, reviewRepo)
 
 	router := router.NewRouterService(authService, tokenService, guestService, listingService).Init()
-	router.Logger.Fatal(router.Start(":8001"))
+	router.Logger.Fatal(router.Start(":80"))
 }

@@ -5,6 +5,7 @@ WORKDIR /app
 COPY . ./
 
 RUN go build -o ./build/server cmd/server/main.go
-RUN go build -o ./build/fixture cmd/fixtures/main.go
+
+EXPOSE 80
 
 CMD ./build/server
