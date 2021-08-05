@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 export const reauth = (): Promise<AxiosResponse<unknown>> => {
   return axios
     .create({
-      baseURL: "http://localhost:8001/",
+      baseURL: `http://${process.env.BACKEND_HOST}/backend`,
       withCredentials: true,
     })
     .post("/auth");

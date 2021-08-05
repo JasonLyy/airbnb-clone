@@ -2,8 +2,11 @@ FROM node:14-alpine as build
 
 WORKDIR /app    
 
-COPY package.json ./
-COPY yarn.lock ./
+ARG BACKEND_HOST
+ENV BACKEND_HOST=$BACKEND_HOST
+
+COPY ./package.json ./
+COPY ./yarn.lock ./
 
 RUN yarn install
 

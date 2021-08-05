@@ -66,6 +66,17 @@ const config: webpack.Configuration = {
         },
       ],
     }),
+    new webpack.ProvidePlugin({
+      process: "process/browser",
+    }),
+    new webpack.DefinePlugin({
+      "process.env": {
+        BACKEND_HOST: JSON.stringify(
+          process.env.BACKEND_HOST || "localhost:8001"
+        ),
+      },
+    }),
+    new webpack.EnvironmentPlugin({ BACKEND_HOST: "BACKEND" }),
   ],
   output: {
     path: path.resolve(__dirname, "build"),
