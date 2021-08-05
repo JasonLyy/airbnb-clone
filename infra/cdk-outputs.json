@@ -1,0 +1,21 @@
+{
+  "airbnb-clone-vpc": {
+    "ExportsOutputRefvpcprivatesubnetSubnet1SubnetA095772F520CE754": "subnet-084eec2a89c02d21b",
+    "ExportsOutputRefvpcA2121C384D1B3CDE": "vpc-0e49e3eda6d559a45",
+    "ExportsOutputRefvpcpublicsubnetSubnet1Subnet8F73942FFC0D137E": "subnet-0fdc1a80b53517606",
+    "ExportsOutputRefvpcprivatesubnetSubnet2Subnet099675226654DFCF": "subnet-060981283d91050f1",
+    "ExportsOutputRefvpcpublicsubnetSubnet2SubnetE9F9D5B446920ABC": "subnet-03316712506d4da75"
+  },
+  "airbnb-clone-cluster": {
+    "ExportsOutputRefalb8A8B13C2253BCEDB": "arn:aws:elasticloadbalancing:ap-southeast-2:752680743111:loadbalancer/app/airbn-alb8A-1UM25FGW30X2U/d2c8f7c3cced5a26",
+    "ExportsOutputRefcluster611F8AFFA07FC079": "airbnb-clone-cluster-cluster611F8AFF-LTm6qew2xXOh",
+    "ExportsOutputFnGetAttalbsecuritygroup0F84CF7BGroupId9630597A": "sg-00b2d2bff7cfbcd9f",
+    "ExportsOutputFnGetAttalbSecurityGroup49866104GroupIdD5B19856": "sg-0464df26da794bea0",
+    "albdnsname": "airbn-alb8A-1UM25FGW30X2U-175814206.ap-southeast-2.elb.amazonaws.com"
+  },
+  "airbnb-clone-db": {
+    "ExportsOutputRefrdsinstanceSecretAttachment3968FB15FF259D38": "arn:aws:secretsmanager:ap-southeast-2:752680743111:secret:rdsinstanceSecretE89A95BB-ACSQTHGgIn4C-LTQn6X",
+    "ExportsOutputFnGetAttredisclusterRedisEndpointPortB3ADB9AA": "6379",
+    "ExportsOutputFnGetAttredisclusterRedisEndpointAddress642DA91D": "air-re-1kyhp5l77xp14.961bs6.0001.apse2.cache.amazonaws.com"
+  }
+}

@@ -41,3 +41,10 @@ To generate the resolvers on the backend:
 cd backend
 go run generate
 ```
+
+## Deploy
+
+```
+cd infra
+cdk deploy --all --output-files ./cdk-outputs.json
+```
