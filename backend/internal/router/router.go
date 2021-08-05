@@ -40,9 +40,10 @@ func (r routerService) Init() *echo.Echo {
 	e.Use(customMiddleware.Auth(r.as, r.ts, r.gs))
 	e.Use(middleware.Recover())
 
-	e.Any("/graphql", controller.GraphQl(r.gs, r.ls))
-	e.GET("/graphql/playground", controller.GraphQlPlayground())
-	e.POST("/auth", controller.Auth(r.gs, r.ls, r.ts))
+	e.Any("/backend/graphql", controller.GraphQl(r.gs, r.ls))
+	e.GET("/backend/graphql/playground", controller.GraphQlPlayground())
+	e.POST("/backend/auth", controller.Auth(r.gs, r.ls, r.ts))
+	e.Any("/backend/health", controller.Health())
 
 	return e
 }

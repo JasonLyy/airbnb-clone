@@ -33,7 +33,7 @@ func GraphQl(gs guest.GuestService, ls listing.ListingService) echo.HandlerFunc 
 
 func GraphQlPlayground() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
-		h := playground.Handler("Playground", "/graphql")
+		h := playground.Handler("Playground", "/backend/graphql")
 		h.ServeHTTP(c.Response(), c.Request())
 		return nil
 	}
@@ -90,5 +90,11 @@ func Auth(gs guest.GuestService, ls listing.ListingService, ts auth.TokenService
 			RefreshToken: t.RefreshToken,
 		})
 	}
+}
 
+func Health() echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+
+		return c.JSON(http.StatusOK, model.AuthPayload{})
+	}
 }
