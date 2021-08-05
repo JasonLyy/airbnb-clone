@@ -23,6 +23,7 @@ docker-compose up -f docker-compose.yml -f docker-compose.override.yml up
 Real datasets from Airbnb are loaded via fixtures (which explains the large CSV files). Ensure the backend is running before loading fixtures.
 
 ```
+cd backend
 go run cmd/fixtures/main.go
 ```
 
