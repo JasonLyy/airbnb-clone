@@ -3,6 +3,7 @@ package listing
 import (
 	"encoding/base64"
 	"encoding/binary"
+	"fmt"
 	"math"
 
 	"github.com/JasonLyy/airbnb-clone/backend/internal/model"
@@ -34,6 +35,10 @@ func (l listingService) Listing(id int64) (*model.Listing, error) {
 }
 
 func (l listingService) ListingConnection(page model.PaginationInput, input model.ListingsInput) (*model.ListingConnection, error) {
+	if page.First == nil {
+		return &model.ListingConnection{}, fmt.Errorf("require first input")
+	}
+
 	var guests int
 	if input.Adults != nil {
 		guests += *input.Adults
@@ -60,7 +65,7 @@ func (l listingService) ListingConnection(page model.PaginationInput, input mode
 
 func listingsToConnection(listings []*model.Listing, page model.PaginationInput, count int64) *model.ListingConnection {
 	if len(listings) == 0 {
-		return &model.ListingConnection{PageInfo: &model.PageInfo{}}
+		return &model.ListingConnection{}
 	}
 
 	pageInfo := model.PageInfo{}
@@ -71,6 +76,10 @@ func listingsToConnection(listings []*model.Listing, page model.PaginationInput,
 		}
 	}
 
+	if page.After != nil {
+		pageInfo.HasPreviousPage = true
+	}
+
 	listingEdges := make([]*model.ListingEdge, len(listings))
 	for i, listing := range listings {
 		cursor := encodeCursor(listing.ID)
@@ -79,10 +88,6 @@ func listingsToConnection(listings []*model.Listing, page model.PaginationInput,
 			Cursor: cursor,
 			Node:   listing,
 		}
-	}
-
-	if page.After != nil {
-		pageInfo.HasPreviousPage = true
 	}
 
 	pageInfo.StartCursor = listingEdges[0].Cursor
